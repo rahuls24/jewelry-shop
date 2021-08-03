@@ -3,6 +3,7 @@ const app = express();
 const port = process.env.PORT || 8000;
 const keys = require('dotenv').config({ path: './src/config/.env' });
 const mongoose = require('mongoose');
+const auth = require('./src/api/auth');
 
 //Check if keys are loaded from .env file
 if (keys.error) {
@@ -32,6 +33,7 @@ mongoose
 	.catch((err) => console.log('Error ', err));
 
 // Routes
+app.use('/api/auth', auth);
 
 app.listen(port, (err) => {
 	if (err) {

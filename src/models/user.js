@@ -7,18 +7,8 @@ const User = new Schema({
 		required: true,
 	},
 	email: {
-		email: {
-			type: String,
-			trim: true,
-			lowercase: true,
-			unique: true,
-			required: 'Email address is required',
-			validate: [validateEmail, 'Please fill a valid email address'],
-			match: [
-				/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-				'Please fill a valid email address',
-			],
-		},
+		type: String,
+		required: true,
 	},
 	phone: {
 		type: String,
@@ -33,7 +23,6 @@ const User = new Schema({
 	role: {
 		type: String,
 		required: true,
-		enum: ['admin', 'staff', 'customer'],
 	},
 	profilePic: {
 		type: String,
