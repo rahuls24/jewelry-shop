@@ -2,24 +2,23 @@
 	"name": "jewelryshop",
 	"version": "1.0.0",
 	"description": "backend for jewelry shop ",
-	"main": "index.js",
+	"main": "dist/index.js",
+	"engines": {
+		"node": "16.x"
+	},
 	"scripts": {
-		"start": "node dist/index.js",
-		"postinstall": "tsc",
-		"watch-node": "nodemon dist/index.js",
-		"watch-ts": "tsc -w",
-		"deploy": "git add . && git commit -m Heroku && git push heroku master"
+		"start": "node .",
+		"build": "tsc",
+		"dev": "nodemon"
 	},
 	"author": "Rahul Kumar",
 	"license": "ISC",
-	"engines": {
-		"node": "16.5.0"
-	},
 	"dependencies": {
 		"bcrypt": "^5.0.1",
 		"dotenv": "^10.0.0",
 		"email-validator": "^2.0.4",
 		"express": "^4.17.1",
+		"i": "^0.3.6",
 		"jsonwebtoken": "^8.5.1",
 		"mongoose": "^5.13.5",
 		"nodemailer": "^6.6.3",
@@ -36,8 +35,13 @@
 		"@types/nodemailer": "^6.4.4",
 		"@types/passport": "^1.0.7",
 		"@types/passport-jwt": "^3.0.6",
+		"concurrently": "^6.2.0",
 		"nodemon": "^2.0.12",
 		"ts-node": "^10.1.0",
 		"typescript": "^4.3.5"
+	},
+	"nodemonConfig": {
+		"ext": "ts",
+		"exec": "npm run build && npm start"
 	}
 }
