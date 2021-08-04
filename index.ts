@@ -1,14 +1,15 @@
+// importing all the dependencies
 import express, { Application, Request, Response } from 'express';
 const app: Application = express();
 import { config } from 'dotenv';
 const keys = config({ path: './src/config/.env' });
 import { connect, Mongoose } from 'mongoose';
+
+//Initialization of port number
 const port: number = Number(process.env.port) || 8000;
 
 // importing all the routes
 import { authRouter } from './src/api/auth';
-import { Otp } from './src/models/otp';
-console.log(new Otp({}));
 //Check if keys are loaded from .env file
 if (keys.error) {
 	console.log('There is an error in loading the keys from .env file');

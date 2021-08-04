@@ -48,7 +48,7 @@ authRouter.post('/signup', async (req: Request, res: Response) => {
 				});
 			}
 		})
-		.catch((err) => {
+		.catch(err => {
 			console.log(err);
 			return res.status(500).json({
 				isSuccess: false,
@@ -61,7 +61,7 @@ authRouter.post('/signup', async (req: Request, res: Response) => {
     @ Route Type => Post
     @ Route Address => '/api/auth/generate-otp'
     @ Route Access => Public
-	@ Description => Responsible for generating the Email OTP
+	@ Description => Responsible for generating the Email OTP 
 
 */
 authRouter.post('/generate-otp', async (req: Request, res: Response) => {

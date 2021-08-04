@@ -6,11 +6,13 @@ import SMTPTransport from 'nodemailer/lib/smtp-transport';
 import { IMailOptions, IUserFromReqBody } from './../interfaces/auth';
 import { IUser } from './../interfaces/models';
 
+//test
+const test = 'test';
 export function commonFunctions() {
 	const isUserPresent = (email: string): Promise<boolean> => {
 		return new Promise((resolve, reject) => {
 			User.findOne({ email: email })
-				.then((user) => {
+				.then(user => {
 					if (user) {
 						return resolve(true);
 					}
@@ -85,7 +87,7 @@ export function signupFunctions() {
 		return new Promise((resolve, reject) => {
 			newOTP
 				.save()
-				.then((result) => {
+				.then(result => {
 					if (result) {
 						return resolve({
 							otpID: result._id,
@@ -94,7 +96,7 @@ export function signupFunctions() {
 					}
 					return reject('Error in saving OTP in DB');
 				})
-				.catch((err) => {
+				.catch(err => {
 					console.log('error occurred while saving OTP in DB' + err);
 					return reject(err);
 				});
@@ -106,7 +108,7 @@ export function signupFunctions() {
 	): Promise<boolean | string> => {
 		return new Promise((resolve, reject) => {
 			Otp.findById(otpID)
-				.then((res) => {
+				.then(res => {
 					if (res) {
 						if (res.otp === otp) {
 							return resolve(true);
@@ -115,7 +117,7 @@ export function signupFunctions() {
 					}
 					return reject('Not is not matched');
 				})
-				.catch((err) => {
+				.catch(err => {
 					console.log('Error occured while matching the OTP' + err);
 					return reject(err);
 				});
@@ -138,7 +140,7 @@ export function signupFunctions() {
 					}
 					return reject(user);
 				})
-				.catch((err) => {
+				.catch(err => {
 					console.log(err);
 					return reject(err);
 				});

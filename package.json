@@ -4,10 +4,11 @@
 	"description": "backend for jewelry shop ",
 	"main": "index.js",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1",
-		"start": "tsc && node dist/index.js",
-		"dev": "nodemon index.ts",
-		"build": "tsc -p ."
+		"start": "node dist/index.js",
+		"postinstall": "tsc",
+		"watch-node": "nodemon dist/index.js",
+		"watch-ts": "tsc -w",
+		"deploy": "git add . && git commit -m Heroku && git push heroku master"
 	},
 	"author": "Rahul Kumar",
 	"license": "ISC",
