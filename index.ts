@@ -6,7 +6,7 @@ const keys = config({ path: './src/config/.env' });
 import { connect, Mongoose } from 'mongoose';
 
 //Initialization of port number
-const port: number | string = Number(process.env.PORT) || 8000;
+const port: number | string = process.env.PORT || 8000;
 
 // importing all the routes
 import { authRouter } from './src/api/auth';
