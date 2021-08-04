@@ -4,7 +4,7 @@
 	"description": "backend for jewelry shop ",
 	"main": "dist/index.js",
 	"engines": {
-		"node": "16.x"
+		"node": "16.5.0"
 	},
 	"scripts": {
 		"start": "node .",
