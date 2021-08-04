@@ -11,10 +11,10 @@ const port = process.env.PORT || 8000;
 // importing all the routes
 import { authRouter } from './src/api/auth';
 //Check if keys are loaded from .env file
-if (keys.error) {
-	console.log('There is an error in loading the keys from .env file');
-	throw keys.error;
-}
+// if (keys.error) {
+// 	console.log('There is an error in loading the keys from .env file');
+// 	throw keys.error;
+// }
 // Initialization of Middleware for getting data from client
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
