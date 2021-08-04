@@ -4,7 +4,10 @@
 	"description": "backend for jewelry shop ",
 	"main": "index.js",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"start": "tsc && node dist/index.js",
+		"dev": "nodemon index.ts",
+		"build": "tsc -p ."
 	},
 	"author": "Rahul Kumar",
 	"license": "ISC",
@@ -14,9 +17,23 @@
 		"email-validator": "^2.0.4",
 		"express": "^4.17.1",
 		"jsonwebtoken": "^8.5.1",
-		"mongoose": "^5.13.4",
+		"mongoose": "^5.13.5",
 		"nodemailer": "^6.6.3",
 		"passport": "^0.4.1",
 		"passport-jwt": "^4.0.0"
+	},
+	"devDependencies": {
+		"@types/bcrypt": "^5.0.0",
+		"@types/dotenv": "^8.2.0",
+		"@types/express": "^4.17.13",
+		"@types/jsonwebtoken": "^8.5.4",
+		"@types/mongoose": "^5.11.97",
+		"@types/node": "^16.4.10",
+		"@types/nodemailer": "^6.4.4",
+		"@types/passport": "^1.0.7",
+		"@types/passport-jwt": "^3.0.6",
+		"nodemon": "^2.0.12",
+		"ts-node": "^10.1.0",
+		"typescript": "^4.3.5"
 	}
 }

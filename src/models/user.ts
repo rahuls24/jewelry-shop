@@ -1,7 +1,7 @@
-const mongoose = require('mongoose');
-const { Schema } = mongoose;
+import { model, Schema, Model, Document } from 'mongoose';
+import { IUser } from '../interfaces/models';
 
-const User = new Schema({
+const User: Schema = new Schema({
 	name: {
 		type: String,
 		required: true,
@@ -9,12 +9,12 @@ const User = new Schema({
 	email: {
 		type: String,
 		validate: {
-			validator: function (rawEmail) {
+			validator: function (rawEmail: string): boolean {
 				const re =
 					/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 				return re.test(String(rawEmail).toLowerCase());
 			},
-			message: (props) => `${props.value} is not a valid email address!`,
+			message: (props: any) => `${props.value} is not a valid email address!`,
 		},
 		required: true,
 	},
@@ -47,4 +47,4 @@ const User = new Schema({
 	},
 });
 
-module.exports = mongoose.model('User', User);
+export const Users: Model<IUser> = model('User', User);

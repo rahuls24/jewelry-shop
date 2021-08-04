@@ -1,7 +1,11 @@
-const express = require('express');
-const router = express.Router();
-const authFunctions = require('../services/auth');
-
+import express, { Request, Response } from 'express';
+import { IUserFromReqBody } from '../interfaces/auth';
+import { IUser } from '../interfaces/models';
+export const authRouter = express.Router();
+import {
+	commonFunctions as common,
+	signupFunctions as signup,
+} from '../services/auth';
 /*
 
     @ Route Type => Post
@@ -10,17 +14,17 @@ const authFunctions = require('../services/auth');
 	@ Description => Responsible for handle register a user
 
 */
-router.post('/signup', async (req, res) => {
-	authFunctions.common
+authRouter.post('/signup', async (req: Request, res: Response) => {
+	common()
 		.isUser(req.body.email)
-		.then(async (result) => {
+		.then(async (result: boolean) => {
 			if (result) {
 				return res.status(409).json({
 					isSuccess: false,
 					errorMsg: 'User is already register to user DB',
 				});
 			}
-			const newUser = {
+			const newUser: IUserFromReqBody = {
 				name: req.body.name,
 				email: req.body.email,
 				phone: req.body.phone,
@@ -28,7 +32,7 @@ router.post('/signup', async (req, res) => {
 				role: req.body.role,
 			};
 			try {
-				const user = await authFunctions.signup.saveUser(newUser);
+				const user: IUser | string = await signup().saveUser(newUser);
 				res.status(200).json({
 					isSuccess: true,
 					userData: user,
@@ -60,10 +64,10 @@ router.post('/signup', async (req, res) => {
 	@ Description => Responsible for generating the Email OTP
 
 */
-router.post('/generate-otp', async (req, res) => {
+authRouter.post('/generate-otp', async (req: Request, res: Response) => {
 	try {
-		const otp = await authFunctions.signup.sendOTP(req.body.email);
-		const result = await authFunctions.signup.saveOTP(otp.otp);
+		const otp: any = await signup().sendOTP(req.body.email);
+		const result = await signup().saveOTP(Number(otp));
 		res.status(200).json({
 			isSuccess: true,
 			otpDetails: result,
@@ -85,9 +89,9 @@ router.post('/generate-otp', async (req, res) => {
 	@ Description => Responsible for verifying the Email OTP
 
 */
-router.post('/verify-otp', async (req, res) => {
+authRouter.post('/verify-otp', async (req: Request, res: Response) => {
 	try {
-		const result = await authFunctions.signup.verifyOTP(
+		const result = await signup().verifyOTP(
 			req.body.otpID,
 			Number(req.body.otp),
 		);
@@ -97,4 +101,7 @@ router.post('/verify-otp', async (req, res) => {
 		res.json(error);
 	}
 });
-module.exports = router;
+
+authRouter.get('/test', (req, res) => {
+	res.send('Running Auth APi');
+});
