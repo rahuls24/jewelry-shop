@@ -9,19 +9,12 @@ import { IUser } from './../interfaces/models';
 //test
 const test = 'test';
 export function commonFunctions() {
-	const isUserPresent = (email: string): Promise<boolean> => {
-		return new Promise((resolve, reject) => {
-			User.findOne({ email: email })
-				.then(user => {
-					if (user) {
-						return resolve(true);
-					}
-					return resolve(false);
-				})
-				.catch((err: Error) => {
-					console.log(err);
-				});
-		});
+	const isUserPresent = async (email: string) => {
+		try {
+			return await User.findOne({ email: email });
+		} catch (error) {
+			console.log(error);
+		}
 	};
 	const generateHash = (myPlaintextPassword: string): string => {
 		const salt: string = genSaltSync(Number(process.env.saltRounds));
@@ -35,7 +28,7 @@ export function commonFunctions() {
 		mailTo: string,
 		mailBody: string,
 		otp: string | number = 'NO OTP',
-	): Promise<number | boolean | string> => {
+	) => {
 		const transporter: Transporter<SMTPTransport.SentMessageInfo> =
 			createTransport({
 				service: 'gmail',
@@ -50,19 +43,33 @@ export function commonFunctions() {
 			subject: `OTP confirmation alert for ${process.env.company}`,
 			html: mailBody,
 		};
-		return new Promise((resolve, reject) => {
-			transporter.sendMail(mailOptions, (error: Error | null, info) => {
+		return await transporter.sendMail(
+			mailOptions,
+			(error: Error | null, info) => {
 				if (error) {
 					console.log(error);
-					return reject('Not able to send mail');
+					return false;
 				} else {
 					if (otp !== 'NO OTP') {
-						return resolve(otp);
+						return otp;
 					}
-					return resolve(true);
+					return otp;
 				}
-			});
-		});
+			},
+		);
+		// return new Promise((resolve, reject) => {
+		// 	transporter.sendMail(mailOptions, (error: Error | null, info) => {
+		// 		if (error) {
+		// 			console.log(error);
+		// 			return reject('Not able to send mail');
+		// 		} else {
+		// 			if (otp !== 'NO OTP') {
+		// 				return resolve(otp);
+		// 			}
+		// 			return resolve(true);
+		// 		}
+		// 	});
+		// });
 	};
 
 	return {
@@ -74,11 +81,11 @@ export function commonFunctions() {
 }
 
 export function signupFunctions() {
-	const sendOTP = (email: string): Promise<string | number | boolean> => {
+	const sendOTP = async (email: string) => {
 		const otp: number = Math.floor(100000 + Math.random() * 900000);
 		const mailBody: string = `<h4>Dear user </h4> <br />
                           <p> Enter the OTP ${otp} for email validation </p>`;
-		return commonFunctions().sendMail(email, mailBody, otp);
+		return await commonFunctions().sendMail(email, mailBody, otp);
 	};
 	const saveOTP = async (otp: number): Promise<string | object> => {
 		const newOTP = new Otp({

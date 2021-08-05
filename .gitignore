@@ -3,5 +3,6 @@
 **/config
 **/.env
 test.js
+package-lock.json
 
 
