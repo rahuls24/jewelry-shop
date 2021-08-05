@@ -4,7 +4,6 @@ const app: Application = express();
 import { config } from 'dotenv';
 config({ path: './src/config/.env' });
 import { connect, Mongoose } from 'mongoose';
-console.log('nodemon working 1');
 //Initialization of port number
 const port = process.env.PORT || 8000;
 
@@ -15,29 +14,23 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // DB connection
-connect(String(process.env.mongoDbUrl), {
-	useNewUrlParser: true,
-	useUnifiedTopology: true,
-})
-	.then((user: Mongoose) => {
-		console.log(
-			`Connected to ${user.connections[0].name} by ${user.connections[0].user}`,
-		);
-		try {
-			app.listen(port, () => {
-				console.log(`Server is running on port ${port}`);
-			});
-		} catch (err) {
-			console.log(
-				'There is a problem in app.listen function in index.js file' + err,
-			);
-		}
-	})
-	.catch((err: Error) => console.log('Error ', err));
-
+(async () => {
+	const connection = await connect(String(process.env.mongoDbUrl), {
+		useNewUrlParser: true,
+		useUnifiedTopology: true,
+	});
+	if (connection?.connection?.readyState !== 1)
+		console.log('connection to db is failed');
+	console.log(
+		`Connected to ${connection.connection.name} by ${connection.connection.user}`,
+	);
+})();
 // All Routes
 app.use('/api/auth', authRouter);
-app.listen(8000);
+
 app.get('/', (req: Request, res: Response) => {
 	res.send('HomePage');
+});
+app.listen(port, () => {
+	console.log(`Server is running on port ${port}`);
 });

@@ -4,18 +4,23 @@ import { createTransport, Transporter } from 'nodemailer';
 import { genSaltSync, hashSync, compareSync } from 'bcrypt';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
 import { IMailOptions, IUserFromReqBody } from './../interfaces/auth';
-import { IUser } from './../interfaces/models';
 
 //test
 const test = 'test';
 export function commonFunctions() {
 	const isUserPresent = async (email: string) => {
 		try {
-			return await User.findOne({ email: email });
+			const result = await User.findOne({ email: email });
+			if (result) return true;
+			return false;
 		} catch (error) {
-			console.log(error);
+			console.log(
+				`error occurred when we are trying to fetch user from db in using isUserPresent function of commonFunction from controller auth.ts and Error is => ${error} `,
+			);
+			return false;
 		}
 	};
+
 	const generateHash = (myPlaintextPassword: string): string => {
 		const salt: string = genSaltSync(Number(process.env.saltRounds));
 		return hashSync(myPlaintextPassword, salt);
@@ -24,52 +29,28 @@ export function commonFunctions() {
 	const verifyHash = (myPlaintextPassword: string, hash: string): boolean => {
 		return compareSync(myPlaintextPassword, hash);
 	};
+
 	const sendMail = async (
 		mailTo: string,
 		mailBody: string,
 		otp: string | number = 'NO OTP',
 	) => {
+		const emailSenderAuthData = {
+			service: 'gmail',
+			auth: {
+				user: process.env.mail,
+				pass: process.env.mailPassword,
+			},
+		};
 		const transporter: Transporter<SMTPTransport.SentMessageInfo> =
-			createTransport({
-				service: 'gmail',
-				auth: {
-					user: process.env.mail,
-					pass: process.env.mailPassword,
-				},
-			});
-		var mailOptions: IMailOptions = {
+			createTransport(emailSenderAuthData);
+		const mailOptions: IMailOptions = {
 			from: String(process.env.mail),
 			to: mailTo,
 			subject: `OTP confirmation alert for ${process.env.company}`,
 			html: mailBody,
 		};
-		return await transporter.sendMail(
-			mailOptions,
-			(error: Error | null, info) => {
-				if (error) {
-					console.log(error);
-					return false;
-				} else {
-					if (otp !== 'NO OTP') {
-						return otp;
-					}
-					return otp;
-				}
-			},
-		);
-		// return new Promise((resolve, reject) => {
-		// 	transporter.sendMail(mailOptions, (error: Error | null, info) => {
-		// 		if (error) {
-		// 			console.log(error);
-		// 			return reject('Not able to send mail');
-		// 		} else {
-		// 			if (otp !== 'NO OTP') {
-		// 				return resolve(otp);
-		// 			}
-		// 			return resolve(true);
-		// 		}
-		// 	});
-		// });
+		return await transporter.sendMail(mailOptions);
 	};
 
 	return {
@@ -85,73 +66,44 @@ export function signupFunctions() {
 		const otp: number = Math.floor(100000 + Math.random() * 900000);
 		const mailBody: string = `<h4>Dear user </h4> <br />
                           <p> Enter the OTP ${otp} for email validation </p>`;
-		return await commonFunctions().sendMail(email, mailBody, otp);
+
+		const sendOtpDetails = await commonFunctions().sendMail(
+			email,
+			mailBody,
+			otp,
+		);
+		if (sendOtpDetails.accepted) return otp;
 	};
-	const saveOTP = async (otp: number): Promise<string | object> => {
+	const saveOTP = async (otp: number) => {
 		const newOTP = new Otp({
 			otp: otp,
+			failTest: 'reason for fail',
 		});
-		return new Promise((resolve, reject) => {
-			newOTP
-				.save()
-				.then(result => {
-					if (result) {
-						return resolve({
-							otpID: result._id,
-							otp: otp,
-						});
-					}
-					return reject('Error in saving OTP in DB');
-				})
-				.catch(err => {
-					console.log('error occurred while saving OTP in DB' + err);
-					return reject(err);
-				});
-		});
+		return await newOTP.save();
 	};
-	const verifyOTP = async (
-		otpID: string,
-		otp: number,
-	): Promise<boolean | string> => {
-		return new Promise((resolve, reject) => {
-			Otp.findById(otpID)
-				.then(res => {
-					if (res) {
-						if (res.otp === otp) {
-							return resolve(true);
-						}
-						return reject('Not is not matched');
-					}
-					return reject('Not is not matched');
-				})
-				.catch(err => {
-					console.log('Error occured while matching the OTP' + err);
-					return reject(err);
-				});
-		});
+	const verifyOTP = async (otpID: string, otp: number) => {
+		try {
+			const otpDetails = await Otp.findById({ sd: 'dd' });
+			if (otpDetails?.otp === otp) return true;
+			return false;
+		} catch (error) {
+			console.log(
+				`An Exception is caused while finding the opt in db durning verifying. Error => ${error}`,
+			);
+			return false;
+		}
 	};
-	const registerUser = (
-		userData: IUserFromReqBody,
-	): Promise<IUser | string> => {
-		return new Promise((resolve, reject) => {
-			if (userData.password.length < 6) {
-				reject('Password length must be grater than 5 character');
-			}
-			userData.password = commonFunctions().hashPassword(userData.password);
-			const newUser = new User(userData);
-			newUser
-				.save()
-				.then((user: IUser) => {
-					if (user) {
-						return resolve(user);
-					}
-					return reject(user);
-				})
-				.catch(err => {
-					console.log(err);
-					return reject(err);
-				});
-		});
+	const registerUser = async (userData: IUserFromReqBody) => {
+		try {
+			const newUserData = await new User(userData).save();
+			if (newUserData) return newUserData;
+			return false;
+		} catch (error) {
+			console.log(
+				`An error is occurred while saving the user to db. Error => ${error}`,
+			);
+			return false;
+		}
 	};
 	return {
 		sendOTP: sendOTP,
