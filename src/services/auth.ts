@@ -5,8 +5,6 @@ import { genSaltSync, hashSync, compareSync } from 'bcrypt';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
 import { IMailOptions, IUserFromReqBody } from './../interfaces/auth';
 
-//test
-const test = 'test';
 export function commonFunctions() {
 	const isUserPresent = async (email: string) => {
 		try {

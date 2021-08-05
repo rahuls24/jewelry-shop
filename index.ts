@@ -3,7 +3,7 @@ import express, { Application, Request, Response } from 'express';
 const app: Application = express();
 import { config } from 'dotenv';
 config({ path: './src/config/.env' });
-import { connect, Mongoose } from 'mongoose';
+import { connect } from 'mongoose';
 //Initialization of port number
 const port = process.env.PORT || 8000;
 
@@ -22,7 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 	if (connection?.connection?.readyState !== 1)
 		console.log('connection to db is failed');
 	console.log(
-		`Connected to ${connection.connection.name} by ${connection.connection.user}`,
+		`Connected to ${connection?.connection?.name} by ${connection?.connection?.user}`,
 	);
 })();
 // All Routes
