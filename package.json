@@ -2,7 +2,7 @@
 	"name": "jewelryshop",
 	"version": "1.0.0",
 	"description": "backend for jewelry shop ",
-	"main": "index.js",
+	"main": "dist/index.js",
 	"engines": {
 		"node": "16.5.0"
 	},
