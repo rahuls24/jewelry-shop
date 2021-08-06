@@ -7,16 +7,11 @@ import { IMailOptions, IUserFromReqBody } from './../interfaces/auth';
 
 export function commonFunctions() {
 	const isUserPresent = async (email: string) => {
-		try {
-			const result = await User.findOne({ email: email });
-			if (result) return true;
-			return false;
-		} catch (error) {
-			console.log(
-				`error occurred when we are trying to fetch user from db in using isUserPresent function of commonFunction from controller auth.ts and Error is => ${error} `,
-			);
-			return false;
-		}
+		return await User.findOne({ email: email });
+	};
+
+	const getUserDetails = async (email: string) => {
+		return await User.findOne({ email: email });
 	};
 
 	const generateHash = (myPlaintextPassword: string): string => {
@@ -52,6 +47,7 @@ export function commonFunctions() {
 		hashPassword: generateHash,
 		verifyPassword: verifyHash,
 		sendMail: sendMail,
+		getUserDetails: getUserDetails,
 	};
 }
 
@@ -72,28 +68,12 @@ export function signupFunctions() {
 		return await newOTP.save();
 	};
 	const verifyOTP = async (otpID: string, otp: number) => {
-		try {
-			const otpDetails = await Otp.findById({ sd: 'dd' });
-			if (otpDetails?.otp === otp) return true;
-			return false;
-		} catch (error) {
-			console.log(
-				`An Exception is caused while finding the opt in db durning verifying. Error => ${error}`,
-			);
-			return false;
-		}
+		const otpDetails = await Otp.findById(otpID);
+		if (otpDetails?.otp === otp) return true;
+		return false;
 	};
 	const registerUser = async (userData: IUserFromReqBody) => {
-		try {
-			const newUserData = await new User(userData).save();
-			if (newUserData) return newUserData;
-			return false;
-		} catch (error) {
-			console.log(
-				`An error is occurred while saving the user to db. Error => ${error}`,
-			);
-			return false;
-		}
+		return await new User(userData).save();
 	};
 	return {
 		sendOTP: sendOTP,

@@ -1,6 +1,8 @@
 // importing all the dependencies
 import express, { Application, Request, Response } from 'express';
-const app: Application = express();
+import * as request from 'supertest';
+console.log(request);
+export const app: Application = express();
 import { config } from 'dotenv';
 config({ path: './src/config/.env' });
 import { connect } from 'mongoose';
@@ -29,7 +31,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/auth', authRouter);
 
 app.get('/', (req: Request, res: Response) => {
-	res.send('HomePage');
+	res.status(200).json('all users sent');
 });
 app.listen(port, () => {
 	console.log(`Server is running on port ${port}`);
