@@ -28,11 +28,7 @@ export function commonFunctions() {
 		return compareSync(myPlaintextPassword, hash);
 	};
 
-	const sendMail = async (
-		mailTo: string,
-		mailBody: string,
-		otp: string | number = 'NO OTP',
-	) => {
+	const sendMail = async (mailTo: string, mailBody: string) => {
 		const emailSenderAuthData = {
 			service: 'gmail',
 			auth: {
@@ -62,14 +58,10 @@ export function commonFunctions() {
 export function signupFunctions() {
 	const sendOTP = async (email: string) => {
 		const otp: number = Math.floor(100000 + Math.random() * 900000);
-		const mailBody: string = `<h4>Dear user </h4> <br />
+		const mailBody = `<h4>Dear user </h4> <br />
                           <p> Enter the OTP ${otp} for email validation </p>`;
 
-		const sendOtpDetails = await commonFunctions().sendMail(
-			email,
-			mailBody,
-			otp,
-		);
+		const sendOtpDetails = await commonFunctions().sendMail(email, mailBody);
 		if (sendOtpDetails.accepted) return otp;
 	};
 	const saveOTP = async (otp: number) => {
