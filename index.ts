@@ -1,7 +1,5 @@
 // importing all the dependencies
 import express, { Application, Request, Response } from 'express';
-import * as request from 'supertest';
-console.log(request);
 export const app: Application = express();
 import { config } from 'dotenv';
 config({ path: './src/config/.env' });

@@ -7,8 +7,7 @@
 		"node": "16.5.0"
 	},
 	"scripts": {
-		"test": "jest",
-		"start": "tsc && node dist/index.js",
+		"start": "node .",
 		"dev": "nodemon index.ts",
 		"build": "tsc -p ."
 	},
@@ -37,19 +36,13 @@
 		"@types/nodemailer": "^6.4.4",
 		"@types/passport": "^1.0.7",
 		"@types/passport-jwt": "^3.0.6",
-		"@types/supertest": "^2.0.11",
 		"@typescript-eslint/eslint-plugin": "^4.29.0",
 		"@typescript-eslint/parser": "^4.29.0",
-		"chai": "^4.3.4",
 		"concurrently": "^6.2.0",
 		"eslint": "^7.32.0",
 		"eslint-config-prettier": "^8.3.0",
 		"eslint-plugin-only-warn": "^1.0.3",
-		"jest": "^27.0.6",
-		"mocha": "^9.0.3",
 		"nodemon": "^2.0.12",
-		"supertest": "^6.1.4",
-		"ts-jest": "^27.0.4",
 		"ts-node": "^10.1.0",
 		"typescript": "^4.3.5"
 	}
