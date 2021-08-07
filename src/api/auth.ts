@@ -1,12 +1,15 @@
 const controllerRoute = '/api/auth';
 import express, { Request, Response } from 'express';
-import { IUserFromReqBody } from '../interfaces/auth';
+import { stringify } from 'querystring';
+import { IPayloadForJwt, IUserFromReqBody } from '../interfaces/auth';
 export const authRouter = express.Router();
 import {
 	commonFunctions as common,
 	signupFunctions as signup,
 } from '../services/auth';
 import { isValidEmail } from '../services/commonFunctions';
+import { parse } from 'error-stack-parser';
+import passport from 'passport';
 /*
 
     @ Route Type => Post
@@ -17,12 +20,15 @@ import { isValidEmail } from '../services/commonFunctions';
 */
 authRouter.post('/signup', async (req: Request, res: Response) => {
 	try {
-		const isUser = await common().isUser(req.body.email);
-		if (isUser)
-			return res.status(409).json({
-				isSuccess: false,
-				errorMsg: 'User is already register to user DB',
-			});
+		const userDetails = await common().getUser(req.body.email);
+		if (userDetails) {
+			if (!userDetails.isVerified) await common().deleteUser(userDetails._id);
+			else
+				return res.status(409).json({
+					isSuccess: false,
+					errorMsg: 'User is already register to user DB',
+				});
+		}
 		if (req.body.password?.length < 6)
 			return res.status(400).json({
 				isSuccess: false,
@@ -150,33 +156,59 @@ authRouter.post('/verify-otp', async (req: Request, res: Response) => {
 */
 authRouter.post('/signin', async (req, res) => {
 	try {
-		const isUserPresent = await common().isUser(req.body.email);
-		if (isUserPresent) {
-			const userDetails = await common().getUserDetails(req.body.email);
-			if (
-				userDetails &&
-				common().verifyPassword(req.body.email, userDetails.password)
-			) {
-				console.log(userDetails);
-				return res.status(200).json({
-					isSuccess: true,
+		const userDetails = await common().getUser(req.body.email);
+		if (userDetails) {
+			if (userDetails.isVerified === false)
+				return res.status(404).json({
+					isSuccess: false,
+					ErrorMessage: 'User is not found',
 				});
-			}
-		} else {
+			else if (
+				common().verifyPassword(req.body.password, userDetails.password)
+			) {
+				const payload: IPayloadForJwt = {
+					id: userDetails._id,
+					email: userDetails.email,
+					name: userDetails.name,
+				};
+				const token = signup().sign(payload);
+				if (token)
+					return res.status(200).json({
+						isSuccess: true,
+						berarToken: token,
+					});
+				else
+					return res.status(500).json({
+						isSuccess: false,
+						errorMessage: 'Something wrong with jwt signin method',
+					});
+			} else
+				return res.status(400).json({
+					isSuccess: false,
+					errorMessage: 'Wrong password',
+				});
+		} else
 			return res.status(404).json({
 				isSuccess: false,
-				ErrorMessage: 'User is not found',
+				errorMessage: 'User is not found',
 			});
-		}
 	} catch (error) {
-		console.log(error, 'err--------------------');
-		return res.send(error);
+		if (error instanceof Error) {
+			console.log(parse(error));
+			const errorMessage = {
+				isSuccess: false,
+				route: controllerRoute + req.route?.path,
+				error: error.message,
+			};
+			return res.status(500).json(errorMessage);
+		}
 	}
 });
 
-authRouter.get('/test', async (req, res) => {
-	const user = await common().isUser('rahul@gmail.com');
-	console.log(1);
-	console.log(user);
-	res.send(user);
-});
+authRouter.get(
+	'/test',
+	passport.authenticate('jwt', { session: false }),
+	async (req, res) => {
+		return res.send('working');
+	},
+);

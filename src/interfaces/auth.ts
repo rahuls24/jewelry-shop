@@ -12,3 +12,15 @@ export interface IUserFromReqBody {
 	password: string;
 	role: string;
 }
+
+export interface IPayloadForJwt {
+	id: string;
+	email: string;
+	name: string;
+}
+
+export interface IError {
+	name: any;
+	message: any;
+	stack: any;
+}

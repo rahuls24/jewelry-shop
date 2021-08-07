@@ -40,6 +40,10 @@ const User: Schema = new Schema({
 		type: String,
 		default: 'https://i.ibb.co/d7DYfTP/default-profile-picture1-744x744.jpg',
 	},
+	isVerified: {
+		type: String,
+		default: false,
+	},
 	registerOn: {
 		type: Date,
 		default: Date.now,
