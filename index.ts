@@ -8,7 +8,7 @@ import passport from 'passport';
 //Initialization of port number
 const port = process.env.PORT || 8000;
 // importing all the routes
-import { authRouter } from './src/api/auth';
+import { router as authRouter } from './src/api/auth';
 
 // Initialization of Middleware
 app.use(express.json());
@@ -17,15 +17,19 @@ app.use(passport.initialize());
 
 // DB connection
 (async () => {
-	const connection = await connect(String(process.env.mongoDbUrl), {
-		useNewUrlParser: true,
-		useUnifiedTopology: true,
-	});
-	if (connection?.connection?.readyState !== 1)
-		console.log('connection to db is failed');
-	console.log(
-		`Connected to ${connection?.connection?.name} by ${connection?.connection?.user}`,
-	);
+	try {
+		const connection = await connect(String(process.env.mongoDbUrl), {
+			useNewUrlParser: true,
+			useUnifiedTopology: true,
+		});
+		if (connection?.connection?.readyState !== 1)
+			console.log('connection to db is failed');
+		console.log(
+			`Connected to ${connection?.connection?.name} by ${connection?.connection?.user}`,
+		);
+	} catch (error) {
+		console.log('An unexpected error come while connecting to DB', error);
+	}
 })();
 // All Routes
 app.use('/api/auth', authRouter);

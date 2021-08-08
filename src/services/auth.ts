@@ -1,4 +1,4 @@
-import { Users as User } from './../models/user';
+import { User } from './../models/user';
 import { Otp } from './../models/otp';
 import { createTransport, Transporter } from 'nodemailer';
 import { genSaltSync, hashSync, compareSync } from 'bcrypt';
@@ -9,15 +9,19 @@ import {
 	IUserFromReqBody,
 } from './../interfaces/auth';
 import { sign } from 'jsonwebtoken';
-import passport from 'passport';
-
 export function commonFunctions() {
-	// const isUserPresent = async (email: string) => {
-	// 	return await User.findOne({ email: email });
-	// };
-
 	const getUserDetails = async (email: string) => {
 		return await User.findOne({ email: email });
+	};
+	const updateUser = async (
+		email: string,
+		shouldUpdateDoneIn: string,
+		valueUpdateBy: any,
+	) => {
+		const user = await commonFunctions().getUser(email);
+		return await User.findByIdAndUpdate(user?._id, {
+			[shouldUpdateDoneIn]: valueUpdateBy,
+		});
 	};
 	const deleteUser = async (id: string) => {
 		return await User.findByIdAndDelete(id);
@@ -29,7 +33,6 @@ export function commonFunctions() {
 	};
 
 	const verifyHash = (myPlaintextPassword: any, hash: any): boolean => {
-		console.log(myPlaintextPassword, hash);
 		return compareSync(myPlaintextPassword, hash);
 	};
 
@@ -58,6 +61,7 @@ export function commonFunctions() {
 		verifyPassword: verifyHash,
 		sendMail: sendMail,
 		deleteUser: deleteUser,
+		updateUser: updateUser,
 	};
 }
 

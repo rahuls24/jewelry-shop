@@ -19,8 +19,8 @@ export interface IPayloadForJwt {
 	name: string;
 }
 
-export interface IError {
-	name: any;
-	message: any;
-	stack: any;
+export interface IOtpFromReqBody {
+	email: string;
+	optId: string;
+	id: string;
 }

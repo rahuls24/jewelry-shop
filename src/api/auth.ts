@@ -1,8 +1,7 @@
 const controllerRoute = '/api/auth';
 import express, { Request, Response } from 'express';
-import { stringify } from 'querystring';
 import { IPayloadForJwt, IUserFromReqBody } from '../interfaces/auth';
-export const authRouter = express.Router();
+export const router = express.Router();
 import {
 	commonFunctions as common,
 	signupFunctions as signup,
@@ -18,7 +17,7 @@ import passport from 'passport';
 	@ Description => Responsible for handle register a user
 
 */
-authRouter.post('/signup', async (req: Request, res: Response) => {
+router.post('/signup', async (req: Request, res: Response) => {
 	try {
 		const userDetails = await common().getUser(req.body.email);
 		if (userDetails) {
@@ -74,7 +73,7 @@ authRouter.post('/signup', async (req: Request, res: Response) => {
 	@ Description => Responsible for generating the Email OTP 
 
 */
-authRouter.post('/generate-otp', async (req: Request, res: Response) => {
+router.post('/generate-otp', async (req: Request, res: Response) => {
 	if (!isValidEmail(req.body.email))
 		return res.status(500).json({
 			isSuccess: false,
@@ -116,16 +115,30 @@ authRouter.post('/generate-otp', async (req: Request, res: Response) => {
 	@ Description => Responsible for verifying the Email OTP
 
 */
-authRouter.post('/verify-otp', async (req: Request, res: Response) => {
+router.post('/verify-otp', async (req: Request, res: Response) => {
 	try {
+		const reqBodyData = {
+			email: req.body.email,
+			optId: req.body.otpId,
+			otp: req.body.opt,
+		};
+		console.log(reqBodyData);
+		if (!reqBodyData.email || !reqBodyData.optId || !reqBodyData.otp)
+			return res.status(400).json({
+				isSuccess: false,
+				errorMessage:
+					'Provide all three parameter that is email id of user, otpId and opt',
+			});
 		const result = await signup().verifyOTP(
-			req.body.otpID,
-			Number(req.body.otp),
+			reqBodyData.email,
+			Number(reqBodyData.otp),
 		);
-		if (result)
+		if (result) {
+			await common().updateUser(reqBodyData.email, 'isVerified', true);
 			return res.status(200).json({
 				isSuccess: true,
 			});
+		}
 		return res.status(404).json({
 			isSuccess: false,
 			ErrorMessage: 'Entered OTP is not matched',
@@ -154,11 +167,11 @@ authRouter.post('/verify-otp', async (req: Request, res: Response) => {
 	@ Description => Responsible for verifying the Email OTP
 
 */
-authRouter.post('/signin', async (req, res) => {
+router.post('/signin', async (req, res) => {
 	try {
 		const userDetails = await common().getUser(req.body.email);
 		if (userDetails) {
-			if (userDetails.isVerified === false)
+			if (!userDetails.isVerified)
 				return res.status(404).json({
 					isSuccess: false,
 					ErrorMessage: 'User is not found',
@@ -205,7 +218,7 @@ authRouter.post('/signin', async (req, res) => {
 	}
 });
 
-authRouter.get(
+router.get(
 	'/test',
 	passport.authenticate('jwt', { session: false }),
 	async (req, res) => {
