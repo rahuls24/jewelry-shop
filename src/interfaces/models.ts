@@ -14,3 +14,14 @@ export interface IOtp extends Document {
 	otp: number;
 	generatedAt: Date;
 }
+export interface IAppointment extends Document {
+	appointmentFrom: string;
+
+	appointmentTo: string;
+
+	appointmentDate: Date;
+	appointmentDescription: string;
+	appointmentPriority: string;
+	appointmentState: string;
+	appointmentCreatedOn: Date;
+}

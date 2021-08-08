@@ -40,6 +40,7 @@ jwtStrategy(passport);
 
 //for testing
 app.get('/', (req: Request, res: Response) => {
+	console.log(req.ip);
 	res.status(200).json('Server is running');
 });
 app.listen(port, () => {
