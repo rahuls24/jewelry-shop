@@ -1,5 +1,26 @@
+import validator from 'validator';
 export const isValidEmail = (email: string): boolean => {
-	const re =
-		/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-	return re.test(String(email).toLowerCase());
+	return validator.isEmail(email);
+};
+export const isValidDate = (email: string): boolean => {
+	return validator.isDate(email);
+};
+
+export const isAllFieldComingFromBody = (fieldsValue: any): boolean => {
+	for (const property in fieldsValue) {
+		if (!fieldsValue[property]) return false;
+	}
+	return true;
+};
+
+export const isBoolean = (item: any): boolean => {
+	return validator.isBoolean(item);
+};
+
+export const isNumber = (item: any): boolean => {
+	return validator.isNumeric(item);
+};
+
+export const isString = (item: any): boolean => {
+	return validator.isAlpha(item);
 };
