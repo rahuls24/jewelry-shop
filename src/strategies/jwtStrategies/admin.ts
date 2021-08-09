@@ -2,7 +2,7 @@ import {
 	Strategy as JwtStrategy,
 	ExtractJwt as ExtractJwt,
 } from 'passport-jwt';
-import { User } from '../models/user';
+import { User } from '../../models/user';
 
 const opts = {
 	jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -10,9 +10,10 @@ const opts = {
 };
 export const jwtStrategy = (passport: any) => {
 	passport.use(
+		'admin',
 		new JwtStrategy(opts, async (jwt_payload, done) => {
 			const user = await User.findById(jwt_payload.data.id);
-			if (user) return done(null, user);
+			if (user?.role === 'admin') return done(null, user);
 			return done(null, false);
 		}),
 	);

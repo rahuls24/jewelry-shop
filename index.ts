@@ -9,12 +9,12 @@ import passport from 'passport';
 const port = process.env.PORT || 8000;
 // importing all the routes
 import { router as authRouter } from './src/api/auth';
+import { router as appointmentRouter } from './src/api/appointment';
 
 // Initialization of Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(passport.initialize());
-
 // DB connection
 (async () => {
 	try {
@@ -33,10 +33,13 @@ app.use(passport.initialize());
 })();
 // All Routes
 app.use('/api/auth', authRouter);
+app.use('/api/appointment', appointmentRouter);
 
 //  importing passport strategies
-import { jwtStrategy } from './src/strategies/jwtStrategies';
-jwtStrategy(passport);
+import { jwtStrategy as adminJwtStrategy } from './src/strategies/jwtStrategies/admin';
+adminJwtStrategy(passport);
+import { jwtStrategy as customerJwtStrategy } from './src/strategies/jwtStrategies/customer';
+customerJwtStrategy(passport);
 
 //for testing
 app.get('/', (req: Request, res: Response) => {
