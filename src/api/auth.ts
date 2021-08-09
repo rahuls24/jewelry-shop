@@ -19,7 +19,7 @@ import passport from 'passport';
 */
 router.post('/signup', async (req: Request, res: Response) => {
 	try {
-		const userDetails = await common().getUser(req.body.email);
+		const userDetails = await common().getUser(req.body.email, req.body.role);
 		if (userDetails) {
 			if (!userDetails.isVerified) await common().deleteUser(userDetails._id);
 			else
@@ -119,6 +119,7 @@ router.post('/verify-otp', async (req: Request, res: Response) => {
 	try {
 		const reqBodyData = {
 			email: req.body.email,
+			role: req.body.role,
 			optId: req.body.otpId,
 			otp: req.body.opt,
 		};
@@ -134,7 +135,12 @@ router.post('/verify-otp', async (req: Request, res: Response) => {
 			Number(reqBodyData.otp),
 		);
 		if (result) {
-			await common().updateUser(reqBodyData.email, 'isVerified', true);
+			await common().updateUser(
+				reqBodyData.email,
+				reqBodyData.role,
+				'isVerified',
+				true,
+			);
 			return res.status(200).json({
 				isSuccess: true,
 			});
@@ -169,7 +175,7 @@ router.post('/verify-otp', async (req: Request, res: Response) => {
 */
 router.post('/signin', async (req, res) => {
 	try {
-		const userDetails = await common().getUser(req.body.email);
+		const userDetails = await common().getUser(req.body.email, req.body.role);
 		if (userDetails) {
 			if (!userDetails.isVerified)
 				return res.status(404).json({
@@ -220,8 +226,12 @@ router.post('/signin', async (req, res) => {
 
 router.get(
 	'/test',
-	passport.authenticate('jwt', { session: false }),
+	passport.authenticate('admin', { session: false }),
 	async (req, res) => {
+		if (req.user) {
+			const user: any = req.user;
+			console.log(user._id);
+		}
 		return res.send('working');
 	},
 );

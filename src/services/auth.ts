@@ -10,15 +10,17 @@ import {
 } from './../interfaces/auth';
 import { sign } from 'jsonwebtoken';
 export function commonFunctions() {
-	const getUserDetails = async (email: string) => {
-		return await User.findOne({ email: email });
+	// TODO: Check for role also
+	const getUserDetails = async (email: string, role: string) => {
+		return await User.findOne({ email: email, role: role });
 	};
 	const updateUser = async (
 		email: string,
+		role: string,
 		shouldUpdateDoneIn: string,
 		valueUpdateBy: any,
 	) => {
-		const user = await commonFunctions().getUser(email);
+		const user = await commonFunctions().getUser(email, role);
 		return await User.findByIdAndUpdate(user?._id, {
 			[shouldUpdateDoneIn]: valueUpdateBy,
 		});
