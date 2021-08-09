@@ -10,7 +10,6 @@ import {
 } from './../interfaces/auth';
 import { sign } from 'jsonwebtoken';
 export function commonFunctions() {
-	// TODO: Check for role also
 	const getUserDetails = async (email: string, role: string) => {
 		return await User.findOne({ email: email, role: role });
 	};

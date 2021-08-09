@@ -6,7 +6,7 @@ import {
 	commonFunctions as common,
 	signupFunctions as signup,
 } from '../services/auth';
-import { isValidEmail } from '../services/commonFunctions';
+import { isEmail } from '../services/commonFunctions';
 import { parse } from 'error-stack-parser';
 import passport from 'passport';
 /*
@@ -74,7 +74,7 @@ router.post('/signup', async (req: Request, res: Response) => {
 
 */
 router.post('/generate-otp', async (req: Request, res: Response) => {
-	if (!isValidEmail(req.body.email))
+	if (!isEmail(req.body.email))
 		return res.status(500).json({
 			isSuccess: false,
 			ErrorMessage: 'Email is not valid',
@@ -189,6 +189,7 @@ router.post('/signin', async (req, res) => {
 					id: userDetails._id,
 					email: userDetails.email,
 					name: userDetails.name,
+					role: userDetails.role,
 				};
 				const token = signup().sign(payload);
 				if (token)

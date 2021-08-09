@@ -1,6 +1,6 @@
 import { model, Schema, Model } from 'mongoose';
 import { IUser } from '../interfaces/models';
-import { isValidEmail } from './../services/commonFunctions';
+import { isEmail } from './../services/commonFunctions';
 
 export const User: Model<IUser> = model(
 	'User',
@@ -13,7 +13,7 @@ export const User: Model<IUser> = model(
 			type: String,
 			validate: {
 				validator: function (rawEmail: string): boolean {
-					return isValidEmail(rawEmail);
+					return isEmail(rawEmail);
 				},
 				message: (props: any) => `${props.value} is not a valid email address!`,
 			},

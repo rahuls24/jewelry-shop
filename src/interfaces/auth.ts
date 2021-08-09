@@ -17,6 +17,7 @@ export interface IPayloadForJwt {
 	id: string;
 	email: string;
 	name: string;
+	role: string;
 }
 
 export interface IOtpFromReqBody {
