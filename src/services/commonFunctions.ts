@@ -1,5 +1,5 @@
 import validator from 'validator';
-export const isValidEmail = (email: string): boolean => {
+export const isEmail = (email: string): boolean => {
 	return validator.isEmail(email);
 };
 export const isValidDate = (email: string): boolean => {
@@ -23,4 +23,7 @@ export const isNumber = (item: any): boolean => {
 
 export const isString = (item: any): boolean => {
 	return validator.isAlpha(item);
+};
+export const isMongoId = (item: any): boolean => {
+	return validator.isMongoId(item);
 };
