@@ -30,7 +30,7 @@ router.post('/signup', async (req: Request, res: Response) => {
 			error: 'Please provide all required value ',
 		});
 	try {
-		const userDetails = await common().getUser(newUser.email, newUser.role);
+		const userDetails = await common().getUser(newUser.email);
 		if (userDetails) {
 			if (!userDetails.isVerified) await common().deleteUser(userDetails._id);
 			else
@@ -187,7 +187,7 @@ router.post('/signin', async (req, res) => {
 			error: 'Please provide all required value ',
 		});
 	try {
-		const userDetails = await common().getUser(userData.email, userData.role);
+		const userDetails = await common().getUser(userData.email);
 		if (userDetails) {
 			if (!userDetails.isVerified)
 				return res.status(404).json({

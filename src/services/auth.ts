@@ -10,8 +10,8 @@ import {
 } from './../interfaces/auth';
 import { sign } from 'jsonwebtoken';
 export function commonFunctions() {
-	const getUserDetails = async (email: string, role: string) => {
-		return await User.findOne({ email: email, role: role });
+	const getUserDetails = async (email: string) => {
+		return await User.findOne({ email: email });
 	};
 	const updateUser = async (
 		email: string,
@@ -19,7 +19,7 @@ export function commonFunctions() {
 		shouldUpdateDoneIn: string,
 		valueUpdateBy: any,
 	) => {
-		const user = await commonFunctions().getUser(email, role);
+		const user = await commonFunctions().getUser(email);
 		return await User.findByIdAndUpdate(user?._id, {
 			[shouldUpdateDoneIn]: valueUpdateBy,
 		});
