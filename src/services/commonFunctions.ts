@@ -7,6 +7,11 @@ export const isValidDate = (email: string): boolean => {
 };
 
 export const isAllFieldComingFromBody = (fieldsValue: any): boolean => {
+	if (
+		Object.keys(fieldsValue).length === 0 &&
+		fieldsValue.constructor === Object
+	)
+		return false;
 	for (const property in fieldsValue) {
 		if (!fieldsValue[property]) return false;
 	}

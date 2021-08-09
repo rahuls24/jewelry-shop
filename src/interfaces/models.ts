@@ -25,3 +25,11 @@ export interface IAppointment extends Document {
 	appointmentState: string;
 	appointmentCreatedOn: Date;
 }
+
+export interface IPrice extends Document {
+	gold24: number;
+	gold22: number;
+	gold18: number;
+	sliver: number;
+	platinum: number;
+}

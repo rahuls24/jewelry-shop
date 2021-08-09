@@ -7,7 +7,6 @@ import {
 	signupFunctions as signup,
 } from '../services/auth';
 import { isEmail, isAllFieldComingFromBody } from '../services/commonFunctions';
-import passport from 'passport';
 import chalk from 'chalk';
 /*
 
@@ -240,14 +239,6 @@ router.post('/signin', async (req, res) => {
 	}
 });
 
-router.get(
-	'/test',
-	passport.authenticate('admin', { session: false }),
-	async (req, res) => {
-		if (req.user) {
-			const user: any = req.user;
-			console.log(user._id);
-		}
-		return res.send('working');
-	},
-);
+router.get('/test', async (req, res) => {
+	return res.send('working');
+});
