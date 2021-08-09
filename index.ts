@@ -10,6 +10,7 @@ const port = process.env.PORT || 8000;
 // importing all the routes
 import { router as authRouter } from './src/api/auth';
 import { router as appointmentRouter } from './src/api/appointment';
+import { router as adminRouter } from './src/api/admin';
 
 // Initialization of Middleware
 app.use(express.json());
@@ -34,6 +35,7 @@ app.use(passport.initialize());
 // All Routes
 app.use('/api/auth', authRouter);
 app.use('/api/appointment', appointmentRouter);
+app.use('/api/admin', adminRouter);
 
 //  importing passport strategies
 import { jwtStrategy as adminJwtStrategy } from './src/strategies/jwtStrategies/admin';
