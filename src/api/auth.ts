@@ -1,6 +1,6 @@
 const controllerRoute = '/api/auth';
 import express, { Request, Response } from 'express';
-import { IPayloadForJwt, IUserFromReqBody } from '../interfaces/auth';
+import { IPayloadForJwt } from '../interfaces/auth';
 export const router = express.Router();
 import {
 	commonFunctions as common,

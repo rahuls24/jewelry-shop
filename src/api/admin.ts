@@ -1,5 +1,5 @@
 const controllerRoute = '/api/admin';
-import express, { Request, Response, Application } from 'express';
+import express, { Request, Response } from 'express';
 import chalk from 'chalk';
 import { adminFunctions } from './../services/admin';
 import { isAllFieldComingFromBody } from './../services/commonFunctions';
