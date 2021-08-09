@@ -1,3 +1,4 @@
+const controllerRoute = '/api/appointment';
 import express, { Request, Response } from 'express';
 import { isValidObjectId } from 'mongoose';
 export const router = express.Router();
@@ -5,6 +6,7 @@ import passport from 'passport';
 import isDate from 'validator/lib/isDate';
 import { commonAppointmentFunctions } from './../services/appointment';
 import { isAllFieldComingFromBody } from './../services/commonFunctions';
+import chalk from 'chalk';
 /*
 
     @ Route Type => Post
@@ -30,7 +32,7 @@ router.post(
 					isSuccess: false,
 					errorMessage: 'Please provide all required details ',
 				});
-			if (!isDate(req.body.appointmentDate))
+			if (!isDate(appointmentData.appointmentDate))
 				return res.status(400).json({
 					isSuccess: false,
 					errorMessage: 'Please provide a valid date details ',
@@ -51,10 +53,14 @@ router.post(
 				});
 		} catch (error) {
 			if (error instanceof Error) {
-				console.log(error);
+				const errorMessage = {
+					route: controllerRoute + req.route?.path,
+					error: error.message,
+				};
+				console.log(chalk.red(JSON.stringify(errorMessage)));
 				return res.status(500).json({
 					isSuccess: false,
-					errorMessage: error.message,
+					error: errorMessage,
 				});
 			}
 		}
@@ -108,10 +114,14 @@ router.get(
 			});
 		} catch (error) {
 			if (error instanceof Error) {
-				console.log(error.message);
+				const errorMessage = {
+					route: controllerRoute + req.route?.path,
+					error: error.message,
+				};
+				console.log(chalk.red(JSON.stringify(errorMessage)));
 				return res.status(500).json({
 					isSuccess: false,
-					errorMessage: error.message,
+					error: errorMessage,
 				});
 			}
 		}
@@ -151,10 +161,14 @@ router.get(
 			});
 		} catch (error) {
 			if (error instanceof Error) {
-				console.log(error.message);
+				const errorMessage = {
+					route: controllerRoute + req.route?.path,
+					error: error.message,
+				};
+				console.log(chalk.red(JSON.stringify(errorMessage)));
 				return res.status(500).json({
 					isSuccess: false,
-					errorMessage: error.message,
+					error: errorMessage,
 				});
 			}
 		}
@@ -196,10 +210,14 @@ router.post(
 			});
 		} catch (error) {
 			if (error instanceof Error) {
-				console.log(error.message);
+				const errorMessage = {
+					route: controllerRoute + req.route?.path,
+					error: error.message,
+				};
+				console.log(chalk.red(JSON.stringify(errorMessage)));
 				return res.status(500).json({
 					isSuccess: false,
-					errorMessage: error.message,
+					error: errorMessage,
 				});
 			}
 		}

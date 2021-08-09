@@ -6,9 +6,9 @@ import {
 	commonFunctions as common,
 	signupFunctions as signup,
 } from '../services/auth';
-import { isEmail } from '../services/commonFunctions';
-import { parse } from 'error-stack-parser';
+import { isEmail, isAllFieldComingFromBody } from '../services/commonFunctions';
 import passport from 'passport';
+import chalk from 'chalk';
 /*
 
     @ Route Type => Post
@@ -18,28 +18,34 @@ import passport from 'passport';
 
 */
 router.post('/signup', async (req: Request, res: Response) => {
+	let newUser = {
+		name: req.body.name,
+		email: req.body.email,
+		phone: req.body.phone,
+		password: req.body.password,
+		role: req.body.role,
+	};
+	if (!isAllFieldComingFromBody(newUser))
+		return res.status(400).json({
+			isSuccess: false,
+			error: 'Please provide all required value ',
+		});
 	try {
-		const userDetails = await common().getUser(req.body.email, req.body.role);
+		const userDetails = await common().getUser(newUser.email, newUser.role);
 		if (userDetails) {
 			if (!userDetails.isVerified) await common().deleteUser(userDetails._id);
 			else
 				return res.status(409).json({
 					isSuccess: false,
-					errorMsg: 'User is already register to user DB',
+					error: 'User is already register to user DB',
 				});
 		}
-		if (req.body.password?.length < 6)
+		if (newUser.password?.length < 6)
 			return res.status(400).json({
 				isSuccess: false,
-				errorMsg: 'Password must be of minimum 6 character',
+				error: 'Password must be of minimum 6 character',
 			});
-		const newUser: IUserFromReqBody = {
-			name: req.body.name,
-			email: req.body.email,
-			phone: req.body.phone,
-			password: common().hashPassword(req.body.password),
-			role: req.body.role,
-		};
+		newUser.password = common().hashPassword(newUser.password);
 		const newUserData = await signup().saveUser(newUser);
 		if (newUserData)
 			return res.status(201).json({
@@ -48,21 +54,20 @@ router.post('/signup', async (req: Request, res: Response) => {
 			});
 		return res.status(500).json({
 			isSuccess: false,
-			errorMsg:
-				' An unexpected error occurred while registering the user to DB.',
+			error: ' An unexpected error occurred while registering the user to DB.',
 		});
 	} catch (error) {
-		const errorMessage = {
-			route: controllerRoute + req.route?.path,
-			error: error,
-		};
-		console.log(errorMessage);
-		return res.status(400).json({
-			isSuccess: false,
-			errorMsg:
-				'An unexpected error occurred while registering the user to DB. Error => ',
-			error: error,
-		});
+		if (error instanceof Error) {
+			const errorMessage = {
+				route: controllerRoute + req.route?.path,
+				error: error.message,
+			};
+			console.log(chalk.red(JSON.stringify(errorMessage)));
+			return res.status(500).json({
+				isSuccess: false,
+				error: errorMessage,
+			});
+		}
 	}
 });
 /*
@@ -75,9 +80,9 @@ router.post('/signup', async (req: Request, res: Response) => {
 */
 router.post('/generate-otp', async (req: Request, res: Response) => {
 	if (!isEmail(req.body.email))
-		return res.status(500).json({
+		return res.status(400).json({
 			isSuccess: false,
-			ErrorMessage: 'Email is not valid',
+			error: 'Email is not valid',
 		});
 	try {
 		const otp: any = await signup().sendOTP(req.body.email);
@@ -89,21 +94,21 @@ router.post('/generate-otp', async (req: Request, res: Response) => {
 			});
 		return res.status(500).json({
 			isSuccess: false,
-			ErrorMessage:
+			error:
 				'Otp is not generated, Some unexpected error occurred while saving it to in db',
 		});
 	} catch (error) {
-		const errorMessage = {
-			route: controllerRoute + req.route?.path,
-			error: error,
-		};
-		console.log(errorMessage);
-		return res.status(400).json({
-			isSuccess: false,
-			ErrorMessage:
-				'Otp is not generated, Some unexpected error occurred while saving it to in db',
-			error: errorMessage,
-		});
+		if (error instanceof Error) {
+			const errorMessage = {
+				route: controllerRoute + req.route?.path,
+				error: error.message,
+			};
+			console.log(chalk.red(JSON.stringify(errorMessage)));
+			return res.status(500).json({
+				isSuccess: false,
+				error: errorMessage,
+			});
+		}
 	}
 });
 
@@ -123,8 +128,7 @@ router.post('/verify-otp', async (req: Request, res: Response) => {
 			optId: req.body.otpId,
 			otp: req.body.opt,
 		};
-		console.log(reqBodyData);
-		if (!reqBodyData.email || !reqBodyData.optId || !reqBodyData.otp)
+		if (!isAllFieldComingFromBody(reqBodyData))
 			return res.status(400).json({
 				isSuccess: false,
 				errorMessage:
@@ -150,18 +154,17 @@ router.post('/verify-otp', async (req: Request, res: Response) => {
 			ErrorMessage: 'Entered OTP is not matched',
 		});
 	} catch (error) {
-		const errorMessage = {
-			isSuccess: false,
-			route: controllerRoute + req.route?.path,
-			error: error,
-		};
-		console.log(errorMessage);
-		return res.status(500).json({
-			isSuccess: false,
-			errorMessage:
-				'Otp is not generated, Some unexpected error occurred while verifying otp',
-			error: errorMessage,
-		});
+		if (error instanceof Error) {
+			const errorMessage = {
+				route: controllerRoute + req.route?.path,
+				error: error.message,
+			};
+			console.log(chalk.red(JSON.stringify(errorMessage)));
+			return res.status(500).json({
+				isSuccess: false,
+				error: errorMessage,
+			});
+		}
 	}
 });
 
@@ -174,8 +177,18 @@ router.post('/verify-otp', async (req: Request, res: Response) => {
 
 */
 router.post('/signin', async (req, res) => {
+	let userData = {
+		email: req.body.email,
+		password: req.body.password,
+		role: req.body.role,
+	};
+	if (!isAllFieldComingFromBody(userData))
+		return res.status(400).json({
+			isSuccess: false,
+			error: 'Please provide all required value ',
+		});
 	try {
-		const userDetails = await common().getUser(req.body.email, req.body.role);
+		const userDetails = await common().getUser(userData.email, userData.role);
 		if (userDetails) {
 			if (!userDetails.isVerified)
 				return res.status(404).json({
@@ -183,7 +196,7 @@ router.post('/signin', async (req, res) => {
 					ErrorMessage: 'User is not found',
 				});
 			else if (
-				common().verifyPassword(req.body.password, userDetails.password)
+				common().verifyPassword(userData.password, userDetails.password)
 			) {
 				const payload: IPayloadForJwt = {
 					id: userDetails._id,
@@ -214,13 +227,15 @@ router.post('/signin', async (req, res) => {
 			});
 	} catch (error) {
 		if (error instanceof Error) {
-			console.log(parse(error));
 			const errorMessage = {
-				isSuccess: false,
 				route: controllerRoute + req.route?.path,
 				error: error.message,
 			};
-			return res.status(500).json(errorMessage);
+			console.log(chalk.red(JSON.stringify(errorMessage)));
+			return res.status(500).json({
+				isSuccess: false,
+				error: errorMessage,
+			});
 		}
 	}
 });
