@@ -1,4 +1,5 @@
 import validator from 'validator';
+import date from 'date-and-time';
 export const isEmail = (email: string): boolean => {
 	return validator.isEmail(email);
 };
@@ -31,4 +32,8 @@ export const isString = (item: any): boolean => {
 };
 export const isMongoId = (item: any): boolean => {
 	return validator.isMongoId(item);
+};
+
+export const addDaysFromToday = (days: number): Date => {
+	return date.addDays(new Date(), days);
 };

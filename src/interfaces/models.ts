@@ -40,3 +40,14 @@ export interface IShop extends Document {
 	currentStatus: boolean;
 	prices: string;
 }
+
+export interface IDesign extends Document {
+	owner: string;
+	imageAddress: string;
+	description: string;
+	isAvailable: boolean;
+
+	transitiveAvailabilityDate: Date;
+	expectedPrice: Number;
+	uploadedOn: Date;
+}
