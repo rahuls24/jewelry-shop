@@ -33,3 +33,10 @@ export interface IPrice extends Document {
 	sliver: number;
 	platinum: number;
 }
+
+export interface IShop extends Document {
+	CurrentAdmin: string;
+	todayOpeningStatus: boolean;
+	currentStatus: boolean;
+	prices: string;
+}
