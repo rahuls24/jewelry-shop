@@ -4,5 +4,6 @@
 **/.env
 test.js
 package-lock.json
+**/tempImageFromMulter
 
 
