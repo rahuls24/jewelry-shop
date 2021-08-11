@@ -179,7 +179,6 @@ router.post('/signin', async (req, res) => {
 	let userData = {
 		email: req.body.email,
 		password: req.body.password,
-		role: req.body.role,
 	};
 	if (!isAllFieldComingFromBody(userData))
 		return res.status(400).json({
