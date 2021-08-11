@@ -7,8 +7,13 @@ export const designFunctions = () => {
 			api_key: '141244768993986',
 			api_secret: 'uv4Ve9aWMIEtRiONmdAtUiCyL6g',
 		});
-	} catch (error) {}
-	const uploadDesignImage = async (path: any, name: any) => {
+	} catch (error) {
+		console.log(
+			'An unexpected error occurred while configuration of cloudinary',
+			error,
+		);
+	}
+	const uploadDesignImage = async (path: string, name: string) => {
 		const uploadedImageData = await cloudinary.v2.uploader.upload(path, {
 			public_id: name,
 		});
@@ -21,20 +26,24 @@ export const designFunctions = () => {
 		return await new Design(designData).save();
 	};
 
-	const getDesignData = async (designId: any) => {
+	const getDesignData = async (designId: string) => {
 		return await Design.findById(designId);
 	};
-	const updateDesign = async (designId: any, shouldUpdate: any, value: any) => {
+	const updateDesign = async (
+		designId: string,
+		shouldUpdate: string,
+		value: string,
+	) => {
 		await Design.findByIdAndUpdate(designId, {
 			[shouldUpdate]: value,
 		});
 		return await designFunctions().get(designId);
 	};
-	const deleteDesign = async (designId: any) => {
+	const deleteDesign = async (designId: string) => {
 		return Design.findByIdAndDelete(designId);
 	};
 
-	const isOwnerOfDesign = async (designId: any, ownerId: any) => {
+	const isOwnerOfDesign = async (designId: string, ownerId: string) => {
 		const design = await designFunctions().get(designId);
 		if (design?.owner === ownerId) return true;
 		return false;

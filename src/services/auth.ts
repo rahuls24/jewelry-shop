@@ -17,7 +17,7 @@ export function commonFunctions() {
 		email: string,
 		role: string,
 		shouldUpdateDoneIn: string,
-		valueUpdateBy: any,
+		valueUpdateBy: string,
 	) => {
 		const user = await commonFunctions().getUser(email);
 		return await User.findByIdAndUpdate(user?._id, {
@@ -33,7 +33,7 @@ export function commonFunctions() {
 		return hashSync(myPlaintextPassword, salt);
 	};
 
-	const verifyHash = (myPlaintextPassword: any, hash: any): boolean => {
+	const verifyHash = (myPlaintextPassword: string, hash: string): boolean => {
 		return compareSync(myPlaintextPassword, hash);
 	};
 

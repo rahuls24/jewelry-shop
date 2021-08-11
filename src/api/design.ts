@@ -29,7 +29,7 @@ router.post(
 	upload.single('design-image'),
 	async (req: Request, res: Response) => {
 		const user: any = req.user;
-		let designData = {
+		const designData = {
 			owner: user.id,
 			imageAddress: req.file?.path,
 			designName: 'unnamed',
@@ -42,13 +42,15 @@ router.post(
 		if (req.body.designName) designData.designName = req.body.designName;
 		try {
 			const imgUrl = await designFunctions().upload(
-				designData.imageAddress,
+				designData.imageAddress ?? 'false',
 				designData.designName,
 			);
 			console.log(imgUrl, 'Image URL');
-			const isUploadedFileDelate = delateFile(designData.imageAddress);
-			if (!isUploadedFileDelate)
-				console.log('Uploaded file is not deleted  from local storage');
+			if (designData.imageAddress) {
+				const isUploadedFileDelate = delateFile(designData.imageAddress);
+				if (!isUploadedFileDelate)
+					console.log('Uploaded file is not deleted  from local storage');
+			}
 			if (imgUrl) {
 				designData.imageAddress = imgUrl;
 				const newDesign = await designFunctions().save(designData);
@@ -205,7 +207,7 @@ router.post(
 		if (req.body.designName) designData.designName = req.body.designName;
 		try {
 			const imgUrl: any = await designFunctions().upload(
-				designData.designAddress,
+				designData.designAddress ?? 'false',
 				'update',
 			);
 			if (imgUrl) designData.designAddress = imgUrl;
@@ -218,7 +220,7 @@ router.post(
 			const updatedDesign = await designFunctions().update(
 				designData.designId,
 				'imageAddress',
-				designData.designAddress,
+				designData.designAddress ?? 'false',
 			);
 			if (updatedDesign)
 				return res.status(200).json({

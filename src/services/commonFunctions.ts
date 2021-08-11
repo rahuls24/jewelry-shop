@@ -20,18 +20,18 @@ export const isAllFieldComingFromBody = (fieldsValue: any): boolean => {
 	return true;
 };
 
-export const isBoolean = (item: any): boolean => {
+export const isBoolean = (item: string): boolean => {
 	return validator.isBoolean(item);
 };
 
-export const isNumber = (item: any): boolean => {
+export const isNumber = (item: string): boolean => {
 	return validator.isNumeric(item);
 };
 
-export const isString = (item: any): boolean => {
+export const isString = (item: string): boolean => {
 	return validator.isAlpha(item);
 };
-export const isMongoId = (item: any): boolean => {
+export const isMongoId = (item: string): boolean => {
 	return validator.isMongoId(item);
 };
 
@@ -39,7 +39,7 @@ export const addDaysFromToday = (days: number): Date => {
 	return date.addDays(new Date(), days);
 };
 
-export const delateFile = (path: any) => {
+export const delateFile = (path: string): boolean => {
 	try {
 		fs.unlinkSync(path);
 		return true;

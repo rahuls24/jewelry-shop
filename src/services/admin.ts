@@ -16,7 +16,7 @@ export const adminFunctions = () => {
 	const getPrices = async () => {
 		return await Price.findById(process.env.priceId);
 	};
-	const getShopStatus = async (shouldFetch: any) => {
+	const getShopStatus = async (shouldFetch: string) => {
 		const shop = await Shop.findById(process.env.shopId);
 		if (shop) {
 			switch (shouldFetch) {
@@ -33,7 +33,7 @@ export const adminFunctions = () => {
 		}
 		return -1;
 	};
-	const setShopStatus = async (shouldChange: any, value: any) => {
+	const setShopStatus = async (shouldChange: string, value: any) => {
 		if (
 			await Shop.findByIdAndUpdate(process.env.shopId, {
 				[shouldChange]: value,
