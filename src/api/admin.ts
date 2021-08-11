@@ -1,12 +1,12 @@
 const controllerRoute = '/api/admin';
 import express, { Request, Response } from 'express';
-import chalk from 'chalk';
 import { adminFunctions } from './../services/admin';
 import {
+	typeChecker,
 	errorHandler,
-	isAllFieldComingFromBody,
-	isBoolean,
+	httpStatus,
 } from './../services/commonFunctions';
+const httpStatusCode = httpStatus();
 import passport from 'passport';
 export const router = express.Router();
 
@@ -32,8 +32,8 @@ router.post(
 			for (const key in req.body) {
 				currentPriceData[key] = Number(req.body[key]);
 			}
-			if (!isAllFieldComingFromBody(currentPriceData))
-				return res.status(400).json({
+			if (!typeChecker().isAllFieldComingFromBody(currentPriceData))
+				return res.status(httpStatusCode.badRequest).json({
 					isSuccess: false,
 					error: 'Please give value for which you want to change the price',
 				});
@@ -46,24 +46,24 @@ router.post(
 			// Checking that either user have sent some value which is not present in  jewelryTypeList
 			for (const key in currentPriceData) {
 				if (!(key in previousPriceData))
-					return res.status(404).json({
+					return res.status(httpStatusCode.badRequest).json({
 						isSuccess: false,
 						error: 'Please give correct attribute ',
 					});
 			}
 			const newPrice = await adminFunctions().setPrices(currentPriceData);
 			if (newPrice)
-				return res.status(200).json({
+				return res.status(httpStatusCode.accepted).json({
 					isSuccess: true,
 					prices: newPrice,
 				});
-			return res.status(404).json({
+			return res.status(httpStatusCode.notFound).json({
 				isSuccess: false,
 				error:
 					'There is some unexpected error occurred while updating of getting the price from db',
 			});
 		} catch (error) {
-			errorHandler(req, res, error, controllerRoute);
+			errorHandler().catchBlockHandler(req, res, error, controllerRoute);
 		}
 	},
 );
@@ -81,16 +81,16 @@ router.get(
 		try {
 			const prices = await adminFunctions().getPrices();
 			if (prices)
-				return res.status(200).json({
+				return res.status(httpStatusCode.accepted).json({
 					isSuccess: true,
 					prices,
 				});
-			return res.json(404).json({
+			return res.json(httpStatusCode.notFound).json({
 				isSuccess: false,
 				error: 'No price list present in DB',
 			});
 		} catch (error) {
-			errorHandler(req, res, error, controllerRoute);
+			errorHandler().catchBlockHandler(req, res, error, controllerRoute);
 		}
 	},
 );
@@ -111,8 +111,8 @@ router.get(
 			shouldUpdate: req.params.shouldUpdate,
 			shouldUpdateTo: req.params.shouldUpdateTo,
 		};
-		if (!isBoolean(params.shouldUpdateTo))
-			return res.status(400).json({
+		if (!typeChecker().isBoolean(params.shouldUpdateTo))
+			return res.status(httpStatusCode.badRequest).json({
 				isSuccess: false,
 				error: 'Please give boolean value to change the status',
 			});
@@ -132,23 +132,23 @@ router.get(
 					);
 					break;
 				default:
-					return res.status(400).json({
+					return res.status(httpStatusCode.badRequest).json({
 						isSuccess: false,
 						error: 'Please give a valid input to change status',
 					});
 			}
 			if (status !== -1)
-				return res.status(200).json({
+				return res.status(httpStatusCode.accepted).json({
 					isSuccess: true,
 					[req.params.shouldUpdate]: status,
 				});
-			return res.status(400).json({
+			return res.status(httpStatusCode.notFound).json({
 				isSuccess: false,
 				error:
 					'An unexpected error occurred while fetching or updating the status',
 			});
 		} catch (error) {
-			errorHandler(req, res, error, controllerRoute);
+			errorHandler().catchBlockHandler(req, res, error, controllerRoute);
 		}
 	},
 );
@@ -166,17 +166,16 @@ router.get(
 		try {
 			const status = await adminFunctions().getShopStatus(req.params.statusOf);
 			if (status !== -1)
-				return res.status(200).json({
+				return res.status(httpStatusCode.accepted).json({
 					isSuccess: true,
 					[req.params.statusOf]: status,
 				});
-			return res.status(500).json({
+			return res.status(httpStatusCode.notFound).json({
 				isSuccess: false,
-				error:
-					'An unexpected error occurred. Please check you are providing correct parameters',
+				error: 'No status found for entered params',
 			});
 		} catch (error) {
-			errorHandler(req, res, error, controllerRoute);
+			errorHandler().catchBlockHandler(req, res, error, controllerRoute);
 		}
 	},
 );

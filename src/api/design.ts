@@ -3,14 +3,13 @@ import express, { Request, Response } from 'express';
 export const router = express.Router();
 import multer from 'multer';
 import {
-	isAllFieldComingFromBody,
-	delateFile,
+	typeChecker,
+	fileHandler,
 	errorHandler,
 } from './../services/commonFunctions';
 const upload = multer({ dest: './src/tempImageFromMulter' });
 import passport from 'passport';
 import { designFunctions } from './../services/design';
-import chalk from 'chalk';
 import { isValidObjectId } from 'mongoose';
 // TODO: Testing is pending
 // TODO: Get all the design or get customer specific design (only for admin)
@@ -33,7 +32,7 @@ router.post(
 			imageAddress: req.file?.path,
 			designName: 'unnamed',
 		};
-		if (!isAllFieldComingFromBody(designData))
+		if (!typeChecker().isAllFieldComingFromBody(designData))
 			return res.status(400).json({
 				isSuccess: false,
 				errorMessage: 'Please provide all required parameter',
@@ -46,7 +45,9 @@ router.post(
 			);
 			console.log(imgUrl, 'Image URL');
 			if (designData.imageAddress) {
-				const isUploadedFileDelate = delateFile(designData.imageAddress);
+				const isUploadedFileDelate = fileHandler().delateFile(
+					designData.imageAddress,
+				);
 				if (!isUploadedFileDelate)
 					console.log('Uploaded file is not deleted  from local storage');
 			}
@@ -69,7 +70,7 @@ router.post(
 					'There is an unexpected error occurred while uploading the image on server',
 			});
 		} catch (error) {
-			errorHandler(req, res, error, controllerRoute);
+			errorHandler().catchBlockHandler(req, res, error, controllerRoute);
 		}
 	},
 );
@@ -107,7 +108,7 @@ router.get(
 				error: 'No design found',
 			});
 		} catch (error) {
-			errorHandler(req, res, error, controllerRoute);
+			errorHandler().catchBlockHandler(req, res, error, controllerRoute);
 		}
 	},
 );
@@ -149,7 +150,7 @@ router.get(
 				error: 'No design found with given design id',
 			});
 		} catch (error) {
-			errorHandler(req, res, error, controllerRoute);
+			errorHandler().catchBlockHandler(req, res, error, controllerRoute);
 		}
 	},
 );
@@ -170,7 +171,7 @@ router.post(
 			designAddress: req.file?.path,
 			designName: 'unnamed',
 		};
-		if (!isAllFieldComingFromBody(designData))
+		if (!typeChecker().isAllFieldComingFromBody(designData))
 			return res.status(400).json({
 				isSuccess: false,
 				error: 'Please provide all required field',
@@ -187,6 +188,11 @@ router.post(
 				designData.designAddress ?? 'false',
 				'update',
 			);
+			const isDeleted = fileHandler().delateFile(
+				designData.designAddress ?? 'false',
+			);
+			if (!isDeleted)
+				console.log('Uploaded file is not deleted  from local storage');
 			if (imgUrl) designData.designAddress = imgUrl;
 			else
 				return res.status(500).json({
@@ -209,7 +215,7 @@ router.post(
 				error: 'No design found with given id',
 			});
 		} catch (error) {
-			errorHandler(req, res, error, controllerRoute);
+			errorHandler().catchBlockHandler(req, res, error, controllerRoute);
 		}
 	},
 );
@@ -245,7 +251,7 @@ router.delete(
 				error: 'No design found with given id',
 			});
 		} catch (error) {
-			errorHandler(req, res, error, controllerRoute);
+			errorHandler().catchBlockHandler(req, res, error, controllerRoute);
 		}
 	},
 );

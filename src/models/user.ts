@@ -1,6 +1,6 @@
 import { model, Schema, Model } from 'mongoose';
 import { IUser } from '../interfaces/models';
-import { isEmail } from './../services/commonFunctions';
+import { typeChecker } from './../services/commonFunctions';
 
 export const User: Model<IUser> = model(
 	'User',
@@ -12,7 +12,7 @@ export const User: Model<IUser> = model(
 		email: {
 			type: String,
 			validate: {
-				validator: (rawEmail: string) => isEmail(rawEmail),
+				validator: (rawEmail: string) => typeChecker().isEmail(rawEmail),
 				message: (props: any) => `${props.value} is not a valid email address!`,
 			},
 			required: true,

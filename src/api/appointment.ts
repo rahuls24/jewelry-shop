@@ -5,11 +5,7 @@ export const router = express.Router();
 import passport from 'passport';
 import isDate from 'validator/lib/isDate';
 import { commonAppointmentFunctions } from './../services/appointment';
-import {
-	errorHandler,
-	isAllFieldComingFromBody,
-} from './../services/commonFunctions';
-import chalk from 'chalk';
+import { errorHandler, typeChecker } from './../services/commonFunctions';
 /*
     @ Route Type => POST
     @ Route Address => '"/create"'
@@ -29,7 +25,7 @@ router.post(
 				appointmentDate: req.body.appointmentDate,
 				appointmentDescription: req.body.appointmentDescription,
 			};
-			if (!isAllFieldComingFromBody(appointmentData))
+			if (!typeChecker().isAllFieldComingFromBody(appointmentData))
 				return res.status(400).json({
 					isSuccess: false,
 					errorMessage: 'Please provide all required details ',
@@ -54,7 +50,7 @@ router.post(
 						'An unexpected error occurred while saving the appointment in DB',
 				});
 		} catch (error) {
-			errorHandler(req, res, error, controllerRoute);
+			errorHandler().catchBlockHandler(req, res, error, controllerRoute);
 		}
 	},
 );
@@ -103,7 +99,7 @@ router.get(
 				errorMessage: 'No record found',
 			});
 		} catch (error) {
-			errorHandler(req, res, error, controllerRoute);
+			errorHandler().catchBlockHandler(req, res, error, controllerRoute);
 		}
 	},
 );
@@ -139,7 +135,7 @@ router.get(
 				errorMessage: 'No record found with give id',
 			});
 		} catch (error) {
-			errorHandler(req, res, error, controllerRoute);
+			errorHandler().catchBlockHandler(req, res, error, controllerRoute);
 		}
 	},
 );
@@ -176,7 +172,7 @@ router.post(
 				errorMessage: 'No record found with give id',
 			});
 		} catch (error) {
-			errorHandler(req, res, error, controllerRoute);
+			errorHandler().catchBlockHandler(req, res, error, controllerRoute);
 		}
 	},
 );

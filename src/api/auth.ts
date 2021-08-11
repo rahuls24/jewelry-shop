@@ -6,12 +6,7 @@ import {
 	commonFunctions as common,
 	signupFunctions as signup,
 } from '../services/auth';
-import {
-	isEmail,
-	isAllFieldComingFromBody,
-	errorHandler,
-} from '../services/commonFunctions';
-import chalk from 'chalk';
+import { typeChecker, errorHandler } from '../services/commonFunctions';
 /*
     @ Route Type => Post
     @ Route Address => '/signup'
@@ -27,7 +22,7 @@ router.post('/signup', async (req: Request, res: Response) => {
 		password: req.body.password,
 		role: req.body.role,
 	};
-	if (!isAllFieldComingFromBody(newUser))
+	if (!typeChecker().isAllFieldComingFromBody(newUser))
 		return res.status(400).json({
 			isSuccess: false,
 			error: 'Please provide all required value ',
@@ -59,7 +54,7 @@ router.post('/signup', async (req: Request, res: Response) => {
 			error: ' An unexpected error occurred while registering the user to DB.',
 		});
 	} catch (error) {
-		errorHandler(req, res, error, controllerRoute);
+		errorHandler().catchBlockHandler(req, res, error, controllerRoute);
 	}
 });
 /*
@@ -70,7 +65,7 @@ router.post('/signup', async (req: Request, res: Response) => {
 	@params => email of user
 */
 router.post('/generate-otp', async (req: Request, res: Response) => {
-	if (!isEmail(req.body.email))
+	if (!typeChecker().isEmail(req.body.email))
 		return res.status(400).json({
 			isSuccess: false,
 			error: 'Email is not valid',
@@ -89,7 +84,7 @@ router.post('/generate-otp', async (req: Request, res: Response) => {
 				'Otp is not generated, Some unexpected error occurred while saving it to in db',
 		});
 	} catch (error) {
-		errorHandler(req, res, error, controllerRoute);
+		errorHandler().catchBlockHandler(req, res, error, controllerRoute);
 	}
 });
 
@@ -107,7 +102,7 @@ router.post('/verify-otp', async (req: Request, res: Response) => {
 			optId: req.body.otpId,
 			otp: req.body.opt,
 		};
-		if (!isAllFieldComingFromBody(reqBodyData))
+		if (!typeChecker().isAllFieldComingFromBody(reqBodyData))
 			return res.status(400).json({
 				isSuccess: false,
 				errorMessage:
@@ -128,7 +123,7 @@ router.post('/verify-otp', async (req: Request, res: Response) => {
 			ErrorMessage: 'Entered OTP is not matched',
 		});
 	} catch (error) {
-		errorHandler(req, res, error, controllerRoute);
+		errorHandler().catchBlockHandler(req, res, error, controllerRoute);
 	}
 });
 
@@ -144,7 +139,7 @@ router.post('/signin', async (req, res) => {
 		email: req.body.email,
 		password: req.body.password,
 	};
-	if (!isAllFieldComingFromBody(userData))
+	if (!typeChecker().isAllFieldComingFromBody(userData))
 		return res.status(400).json({
 			isSuccess: false,
 			error: 'Please provide all required value ',
@@ -188,7 +183,7 @@ router.post('/signin', async (req, res) => {
 				errorMessage: 'User is not found',
 			});
 	} catch (error) {
-		errorHandler(req, res, error, controllerRoute);
+		errorHandler().catchBlockHandler(req, res, error, controllerRoute);
 	}
 });
 

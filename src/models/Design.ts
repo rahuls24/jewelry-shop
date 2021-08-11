@@ -1,6 +1,6 @@
 import { model, Model, Schema } from 'mongoose';
 import { IDesign } from '../interfaces/models';
-import { addDaysFromToday } from '../services/commonFunctions';
+import { dateHandler } from '../services/commonFunctions';
 export const Design: Model<IDesign> = model(
 	'Design',
 	new Schema({
@@ -23,7 +23,7 @@ export const Design: Model<IDesign> = model(
 		},
 		transitiveAvailabilityDate: {
 			type: Date,
-			default: addDaysFromToday(30),
+			default: dateHandler().addDaysFromToday(30),
 		},
 		expectedPrice: {
 			type: Number,
