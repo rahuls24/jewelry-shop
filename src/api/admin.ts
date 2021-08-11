@@ -10,12 +10,11 @@ import passport from 'passport';
 export const router = express.Router();
 
 /*
-
     @ Route Type => POST
-    @ Route Address => '"/set-prices"'
-    @ Route Access => Private (Only for admin)
+    @ Route Address => '/set-price'
+    @ Route Access => Private
     @ Description => A route for setting the price
-
+	@params => User can give anything which is present in jewelryTypeList
 */
 router.post(
 	'/set-price',
@@ -24,24 +23,27 @@ router.post(
 		try {
 			const previousPriceData: any = await adminFunctions().getPrices();
 			const currentPriceData: any = {};
-			let priceList: any = process.env.priceAvailable?.split('+');
-			console.log(priceList);
-			console.log(req.body, '0');
+
+			// Getting list of element list from .env file
+			const jewelryTypeList: any = process.env.priceAvailable?.split('+');
+			//We are getting all params as string so converting those in Integer
+
 			for (const key in req.body) {
 				currentPriceData[key] = Number(req.body[key]);
 			}
-			console.log(currentPriceData, '1');
 			if (!isAllFieldComingFromBody(currentPriceData))
 				return res.status(400).json({
 					isSuccess: false,
 					error: 'Please give value for which you want to change the price',
 				});
-			for (let index = 0; index < priceList.length; index++) {
-				if (!(priceList[index] in currentPriceData))
-					currentPriceData[priceList[index]] =
-						previousPriceData[priceList[index]];
+
+			//All params are optional to send from body so we are initializes which is not send by user
+			for (let index = 0; index < jewelryTypeList.length; index++) {
+				if (!(jewelryTypeList[index] in currentPriceData))
+					currentPriceData[jewelryTypeList[index]] =
+						previousPriceData[jewelryTypeList[index]];
 			}
-			console.log(currentPriceData, previousPriceData);
+			//Checking that either user have sent some value which is not present in  jewelryTypeList
 			for (const key in currentPriceData) {
 				if (!(key in previousPriceData))
 					return res.status(404).json({
@@ -76,12 +78,11 @@ router.post(
 	},
 );
 /*
-
     @ Route Type => GET
     @ Route Address => '/get-price'
     @ Route Access => Private
     @ Description => A route for get the price  list
-
+	@params => Noting is needed
 */
 router.get(
 	'/get-price',
@@ -92,7 +93,7 @@ router.get(
 			if (prices)
 				return res.status(200).json({
 					isSuccess: true,
-					prices: prices,
+					prices,
 				});
 			return res.json(404).json({
 				isSuccess: false,
@@ -115,12 +116,11 @@ router.get(
 );
 
 /*
-
     @ Route Type => POST
     @ Route Address => '/set-shop-status/:shouldUpdate/:shouldUpdateTo'
     @ Route Access => Private
     @ Description => A route for setting shop status
-
+	@params => Asked in url
 */
 
 router.get(
@@ -137,9 +137,8 @@ router.get(
 				error: 'Please give boolean value to change the status',
 			});
 		try {
-			const shouldChange = req.params.shouldUpdate;
 			let status;
-			switch (shouldChange) {
+			switch (req.params.shouldUpdate) {
 				case 'todayOpeningStatus':
 					status = await adminFunctions().setShopStatus(
 						'todayOpeningStatus',
@@ -162,7 +161,7 @@ router.get(
 			if (status !== -1)
 				return res.status(200).json({
 					isSuccess: true,
-					[shouldChange]: status,
+					[req.params.shouldUpdate]: status,
 				});
 			return res.status(400).json({
 				isSuccess: false,
@@ -185,12 +184,11 @@ router.get(
 	},
 );
 /*
-
     @ Route Type => GET
     @ Route Address => '/get-shop-status/:statusOf'
     @ Route Access => Private
     @ Description => A route for getting required status 
-
+	@params => Asked in url
 */
 router.get(
 	'/get-shop-status/:statusOf',

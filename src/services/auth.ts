@@ -11,13 +11,12 @@ import {
 import { sign } from 'jsonwebtoken';
 export function commonFunctions() {
 	const getUserDetails = async (email: string) => {
-		return await User.findOne({ email: email });
+		return await User.findOne({ email });
 	};
 	const updateUser = async (
 		email: string,
-		role: string,
 		shouldUpdateDoneIn: string,
-		valueUpdateBy: string,
+		valueUpdateBy: any,
 	) => {
 		const user = await commonFunctions().getUser(email);
 		return await User.findByIdAndUpdate(user?._id, {
@@ -60,9 +59,9 @@ export function commonFunctions() {
 		getUser: getUserDetails,
 		hashPassword: generateHash,
 		verifyPassword: verifyHash,
-		sendMail: sendMail,
-		deleteUser: deleteUser,
-		updateUser: updateUser,
+		sendMail,
+		deleteUser,
+		updateUser,
 	};
 }
 
@@ -103,9 +102,9 @@ export function signupFunctions() {
 		);
 	};
 	return {
-		sendOTP: sendOTP,
-		saveOTP: saveOTP,
-		verifyOTP: verifyOTP,
+		sendOTP,
+		saveOTP,
+		verifyOTP,
 		saveUser: registerUser,
 		sign: signin,
 	};

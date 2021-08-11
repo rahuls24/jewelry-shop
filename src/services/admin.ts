@@ -41,11 +41,10 @@ export const adminFunctions = () => {
 		)
 			return await adminFunctions().getShopStatus(shouldChange);
 	};
-
 	return {
-		setPrices: setPrices,
-		getPrices: getPrices,
-		getShopStatus: getShopStatus,
-		setShopStatus: setShopStatus,
+		setPrices,
+		getPrices,
+		getShopStatus,
+		setShopStatus,
 	};
 };

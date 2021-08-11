@@ -9,15 +9,14 @@ import {
 import { isEmail, isAllFieldComingFromBody } from '../services/commonFunctions';
 import chalk from 'chalk';
 /*
-
     @ Route Type => Post
-    @ Route Address => '/api/auth/signup'
+    @ Route Address => '/signup'
     @ Route Access => Public
 	@ Description => Responsible for handle register a user
-
+	@params => check newUser variable 
 */
 router.post('/signup', async (req: Request, res: Response) => {
-	let newUser = {
+	const newUser = {
 		name: req.body.name,
 		email: req.body.email,
 		phone: req.body.phone,
@@ -70,12 +69,11 @@ router.post('/signup', async (req: Request, res: Response) => {
 	}
 });
 /*
-
     @ Route Type => Post
-    @ Route Address => '/api/auth/generate-otp'
+    @ Route Address => '/generate-otp'
     @ Route Access => Public
 	@ Description => Responsible for generating the Email OTP 
-
+	@params => email of user
 */
 router.post('/generate-otp', async (req: Request, res: Response) => {
 	if (!isEmail(req.body.email))
@@ -87,7 +85,7 @@ router.post('/generate-otp', async (req: Request, res: Response) => {
 		const otp: any = await signup().sendOTP(req.body.email);
 		const result = await signup().saveOTP(otp);
 		if (result)
-			return res.status(200).json({
+			return res.status(201).json({
 				isSuccess: true,
 				otpDetails: result,
 			});
@@ -112,18 +110,16 @@ router.post('/generate-otp', async (req: Request, res: Response) => {
 });
 
 /*
-
     @ Route Type => Post
-    @ Route Address => '/api/auth/verify-otp'
+    @ Route Address => '/verify-otp'
     @ Route Access => Public
 	@ Description => Responsible for verifying the Email OTP
-
+	@params => check reqBodyData variable
 */
 router.post('/verify-otp', async (req: Request, res: Response) => {
 	try {
 		const reqBodyData = {
 			email: req.body.email,
-			role: req.body.role,
 			optId: req.body.otpId,
 			otp: req.body.opt,
 		};
@@ -138,17 +134,12 @@ router.post('/verify-otp', async (req: Request, res: Response) => {
 			Number(reqBodyData.otp),
 		);
 		if (result) {
-			await common().updateUser(
-				reqBodyData.email,
-				reqBodyData.role,
-				'isVerified',
-				true,
-			);
+			await common().updateUser(reqBodyData.email, 'isVerified', true);
 			return res.status(200).json({
 				isSuccess: true,
 			});
 		}
-		return res.status(404).json({
+		return res.status(400).json({
 			isSuccess: false,
 			ErrorMessage: 'Entered OTP is not matched',
 		});
@@ -168,12 +159,11 @@ router.post('/verify-otp', async (req: Request, res: Response) => {
 });
 
 /*
-
     @ Route Type => Post
-    @ Route Address => '/api/auth/verify-otp'
+    @ Route Address => '/login'
     @ Route Access => Public
-	@ Description => Responsible for verifying the Email OTP
-
+	@ Description => Responsible for handle login of user
+	@params => email and password 
 */
 router.post('/signin', async (req, res) => {
 	let userData = {

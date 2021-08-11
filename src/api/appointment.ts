@@ -8,12 +8,11 @@ import { commonAppointmentFunctions } from './../services/appointment';
 import { isAllFieldComingFromBody } from './../services/commonFunctions';
 import chalk from 'chalk';
 /*
-
-    @ Route Type => Post
+    @ Route Type => POST
     @ Route Address => '"/create"'
     @ Route Access => Private(customer)
-    @ Description => A route for creating an appointment 
-
+    @ Description => A route for creating an appointment by user
+	@params => appointmentTo,appointmentDate,appointmentDescription
 */
 router.post(
 	'/create',
@@ -43,7 +42,7 @@ router.post(
 			if (newAppointmentData)
 				return res.status(201).json({
 					isSuccess: true,
-					appointmentData: newAppointmentData,
+					appointment: newAppointmentData,
 				});
 			else
 				return res.status(500).json({
@@ -68,12 +67,11 @@ router.post(
 );
 
 /*
-
 	@ Route Type => GET
 	@ Route Address => '/get-all-appointment'
 	@ Route Access => Private
-	@ Description => A route for get all the appointment made by customer
-
+	@ Description => A route for get all the appointment
+	@params => Noting is needed 
 */
 router.get(
 	'/get-all-appointment',
@@ -106,7 +104,7 @@ router.get(
 			if (appointments)
 				return res.status(200).json({
 					isSuccess: true,
-					appointments: appointments,
+					appointments,
 				});
 			return res.status(404).json({
 				isSuccess: false,
@@ -129,12 +127,11 @@ router.get(
 );
 
 /*
-
-	@ Route Type => Get
-	@ Route Address => '/get-appointment'
+	@ Route Type => GET
+	@ Route Address => '/get-appointment/:appointmentId'
 	@ Route Access => Private
 	@ Description => A route for get a specific appointment
-
+	@params => Mention in url
 */
 router.get(
 	'/get-appointment/:appointmentId',
@@ -153,7 +150,7 @@ router.get(
 			if (appointment)
 				return res.status(200).json({
 					isSuccess: true,
-					appointments: appointment,
+					appointment,
 				});
 			return res.status(404).json({
 				isSuccess: false,
@@ -176,12 +173,10 @@ router.get(
 );
 
 /*
-
 	@ Route Type => POST
-	@ Route Address => '/update-appointment'
+	@ Route Address => '/confirm-appointment'
 	@ Route Access => Private
-	@ Description => A route for update appointment
-
+	@ Description => A route for confirming the appointment
 */
 router.post(
 	'/confirm-appointment',
@@ -202,7 +197,7 @@ router.post(
 			if (appointment)
 				return res.status(200).json({
 					isSuccess: true,
-					appointments: appointment,
+					appointment,
 				});
 			return res.status(404).json({
 				isSuccess: false,

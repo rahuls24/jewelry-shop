@@ -12,9 +12,7 @@ export const User: Model<IUser> = model(
 		email: {
 			type: String,
 			validate: {
-				validator: function (rawEmail: string): boolean {
-					return isEmail(rawEmail);
-				},
+				validator: (rawEmail: string) => isEmail(rawEmail),
 				message: (props: any) => `${props.value} is not a valid email address!`,
 			},
 			required: true,

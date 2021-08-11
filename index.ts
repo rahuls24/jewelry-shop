@@ -55,3 +55,4 @@ app.listen(port, () => {
 });
 
 // TODO: Check the HTTP status if we not get any data from DB in all apis(design API is done)
+// TODO: Find a way to not to use "any" type

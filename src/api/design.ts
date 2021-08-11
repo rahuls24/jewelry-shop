@@ -16,12 +16,10 @@ import { isValidObjectId } from 'mongoose';
 // TODO: Check the user uploaded only image
 
 /*
-
     @ Route Type => Post
     @ Route Address => '/upload-design'
     @ Route Access => Private
     @ Description => A route for uploading the design 
-
 */
 router.post(
 	'/upload-design',
@@ -86,12 +84,10 @@ router.post(
 );
 
 /*
-
     @ Route Type => GET
     @ Route Address => '/update-design/:shouldUpdate'
     @ Route Access => Private
     @ Description => A route for updating the design except design image
-
 */
 router.get(
 	'/get-design/:designId',
@@ -112,7 +108,7 @@ router.get(
 		if (design)
 			return res.status(200).json({
 				isSuccess: true,
-				design: design,
+				design,
 			});
 		return res.status(404).json({
 			isSuccess: false,
@@ -122,12 +118,10 @@ router.get(
 );
 
 /*
-
     @ Route Type => GET
     @ Route Address => '/update-design/:shouldUpdate'
     @ Route Access => Private
     @ Description => A route for updating the design except design image
-
 */
 router.get(
 	'/update-design/:designId/:shouldUpdate/:value',
@@ -176,12 +170,10 @@ router.get(
 );
 
 /*
-
     @ Route Type => POST
     @ Route Address => '/update-image'
     @ Route Access => Private
     @ Description => A route for updating only design image
-
 */
 router.post(
 	'/update-image',
@@ -248,12 +240,10 @@ router.post(
 );
 
 /*
-
     @ Route Type => POST
     @ Route Address => '/update-image'
     @ Route Access => Private
     @ Description => A route for updating only design image
-
 */
 router.delete(
 	'/delete-design/:designId',
