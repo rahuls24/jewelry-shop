@@ -54,7 +54,7 @@ router.post('/signup', async (req: Request, res: Response) => {
 			error: ' An unexpected error occurred while registering the user to DB.',
 		});
 	} catch (error) {
-		errorHandler().catchBlockHandler(req, res, error, controllerRoute);
+		return errorHandler().catchBlockHandler(req, res, error, controllerRoute);
 	}
 });
 /*
@@ -84,7 +84,7 @@ router.post('/generate-otp', async (req: Request, res: Response) => {
 				'Otp is not generated, Some unexpected error occurred while saving it to in db',
 		});
 	} catch (error) {
-		errorHandler().catchBlockHandler(req, res, error, controllerRoute);
+		return errorHandler().catchBlockHandler(req, res, error, controllerRoute);
 	}
 });
 
@@ -123,7 +123,7 @@ router.post('/verify-otp', async (req: Request, res: Response) => {
 			ErrorMessage: 'Entered OTP is not matched',
 		});
 	} catch (error) {
-		errorHandler().catchBlockHandler(req, res, error, controllerRoute);
+		return errorHandler().catchBlockHandler(req, res, error, controllerRoute);
 	}
 });
 
@@ -183,7 +183,7 @@ router.post('/signin', async (req, res) => {
 				errorMessage: 'User is not found',
 			});
 	} catch (error) {
-		errorHandler().catchBlockHandler(req, res, error, controllerRoute);
+		return errorHandler().catchBlockHandler(req, res, error, controllerRoute);
 	}
 });
 

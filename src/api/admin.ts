@@ -63,7 +63,7 @@ router.post(
 					'There is some unexpected error occurred while updating of getting the price from db',
 			});
 		} catch (error) {
-			errorHandler().catchBlockHandler(req, res, error, controllerRoute);
+			return errorHandler().catchBlockHandler(req, res, error, controllerRoute);
 		}
 	},
 );
@@ -90,7 +90,7 @@ router.get(
 				error: 'No price list present in DB',
 			});
 		} catch (error) {
-			errorHandler().catchBlockHandler(req, res, error, controllerRoute);
+			return errorHandler().catchBlockHandler(req, res, error, controllerRoute);
 		}
 	},
 );
@@ -148,7 +148,7 @@ router.get(
 					'An unexpected error occurred while fetching or updating the status',
 			});
 		} catch (error) {
-			errorHandler().catchBlockHandler(req, res, error, controllerRoute);
+			return errorHandler().catchBlockHandler(req, res, error, controllerRoute);
 		}
 	},
 );
@@ -175,7 +175,7 @@ router.get(
 				error: 'No status found for entered params',
 			});
 		} catch (error) {
-			errorHandler().catchBlockHandler(req, res, error, controllerRoute);
+			return errorHandler().catchBlockHandler(req, res, error, controllerRoute);
 		}
 	},
 );

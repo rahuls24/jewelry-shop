@@ -7,7 +7,9 @@ import {
 	fileHandler,
 	errorHandler,
 } from './../services/commonFunctions';
-const upload = multer({ dest: './src/tempImageFromMulter' });
+const upload = multer({ dest: './src/tempImageFromMulter' }).single(
+	'design-image',
+);
 import passport from 'passport';
 import { designFunctions } from './../services/design';
 import { isValidObjectId } from 'mongoose';
@@ -24,54 +26,68 @@ import { isValidObjectId } from 'mongoose';
 router.post(
 	'/upload-design',
 	passport.authenticate(['admin', 'customer'], { session: false }),
-	upload.single('design-image'),
 	async (req: Request, res: Response) => {
-		const user: any = req.user;
-		const designData = {
-			owner: user.id,
-			imageAddress: req.file?.path,
-			designName: 'unnamed',
-		};
-		if (!typeChecker().isAllFieldComingFromBody(designData))
-			return res.status(400).json({
-				isSuccess: false,
-				errorMessage: 'Please provide all required parameter',
-			});
-		if (req.body.designName) designData.designName = req.body.designName;
-		try {
-			const imgUrl = await designFunctions().upload(
-				designData.imageAddress ?? 'false',
-				designData.designName,
-			);
-			console.log(imgUrl, 'Image URL');
-			if (designData.imageAddress) {
-				const isUploadedFileDelate = fileHandler().delateFile(
-					designData.imageAddress,
-				);
-				if (!isUploadedFileDelate)
-					console.log('Uploaded file is not deleted  from local storage');
+		upload(req, res, async err => {
+			if (err instanceof multer.MulterError) {
+				return errorHandler().catchBlockHandler(req, res, err, controllerRoute);
+				console.log(24);
+			} else if (err) {
+				// An unknown error occurred when uploading.
+				return errorHandler().catchBlockHandler(req, res, err, controllerRoute);
 			}
-			if (imgUrl) {
-				designData.imageAddress = imgUrl;
-				const newDesign = await designFunctions().save(designData);
-				if (newDesign)
-					return res.status(201).json({
-						isSuccess: true,
-						design: newDesign,
-					});
-				return res.json(404).json({
+			// Everything went fine.
+			const user: any = req.user;
+			const designData = {
+				owner: user.id,
+				imageAddress: req.file?.path,
+				designName: 'unnamed',
+			};
+			if (!typeChecker().isAllFieldComingFromBody(designData))
+				return res.status(400).json({
 					isSuccess: false,
-					error: 'There is an unexpected error occurred',
+					errorMessage: 'Please provide all required parameter',
 				});
+			if (req.body.designName) designData.designName = req.body.designName;
+			try {
+				const imgUrl = await designFunctions().upload(
+					designData.imageAddress ?? 'false',
+					designData.designName,
+				);
+				console.log(imgUrl, 'Image URL');
+				if (designData.imageAddress) {
+					const isUploadedFileDelate = fileHandler().delateFile(
+						designData.imageAddress,
+					);
+					if (!isUploadedFileDelate)
+						console.log('Uploaded file is not deleted  from local storage');
+				}
+				if (imgUrl) {
+					designData.imageAddress = imgUrl;
+					const newDesign = await designFunctions().save(designData);
+					if (newDesign)
+						return res.status(201).json({
+							isSuccess: true,
+							design: newDesign,
+						});
+					return res.json(404).json({
+						isSuccess: false,
+						error: 'There is an unexpected error occurred',
+					});
+				}
+				return res.status(500).json({
+					isSuccess: false,
+					error:
+						'There is an unexpected error occurred while uploading the image on server',
+				});
+			} catch (error) {
+				return errorHandler().catchBlockHandler(
+					req,
+					res,
+					error,
+					controllerRoute,
+				);
 			}
-			return res.status(500).json({
-				isSuccess: false,
-				error:
-					'There is an unexpected error occurred while uploading the image on server',
-			});
-		} catch (error) {
-			errorHandler().catchBlockHandler(req, res, error, controllerRoute);
-		}
+		});
 	},
 );
 
@@ -108,7 +124,7 @@ router.get(
 				error: 'No design found',
 			});
 		} catch (error) {
-			errorHandler().catchBlockHandler(req, res, error, controllerRoute);
+			return errorHandler().catchBlockHandler(req, res, error, controllerRoute);
 		}
 	},
 );
@@ -150,7 +166,7 @@ router.get(
 				error: 'No design found with given design id',
 			});
 		} catch (error) {
-			errorHandler().catchBlockHandler(req, res, error, controllerRoute);
+			return errorHandler().catchBlockHandler(req, res, error, controllerRoute);
 		}
 	},
 );
@@ -164,59 +180,72 @@ router.get(
 router.post(
 	'/update-image',
 	passport.authenticate(['admin', 'customer'], { session: false }),
-	upload.single('design-image'),
 	async (req: Request, res: Response) => {
-		const designData = {
-			designId: req.body.designId,
-			designAddress: req.file?.path,
-			designName: 'unnamed',
-		};
-		if (!typeChecker().isAllFieldComingFromBody(designData))
-			return res.status(400).json({
-				isSuccess: false,
-				error: 'Please provide all required field',
-			});
-		const user: any = req.user;
-		if (!(await designFunctions().isOwner(designData.designId, user.id)))
-			return res.status(401).json({
-				isSuccess: false,
-				error: 'User is not owner of requested design',
-			});
-		if (req.body.designName) designData.designName = req.body.designName;
-		try {
-			const imgUrl: any = await designFunctions().upload(
-				designData.designAddress ?? 'false',
-				'update',
-			);
-			const isDeleted = fileHandler().delateFile(
-				designData.designAddress ?? 'false',
-			);
-			if (!isDeleted)
-				console.log('Uploaded file is not deleted  from local storage');
-			if (imgUrl) designData.designAddress = imgUrl;
-			else
-				return res.status(500).json({
+		upload(req, res, async err => {
+			if (err instanceof multer.MulterError) {
+				// A Multer error occurred when uploading.
+				return errorHandler().catchBlockHandler(req, res, err, controllerRoute);
+			} else if (err) {
+				return errorHandler().catchBlockHandler(req, res, err, controllerRoute);
+			}
+			// Everything went fine.
+			const designData = {
+				designId: req.body.designId,
+				designAddress: req.file?.path,
+				designName: 'unnamed',
+			};
+			if (!typeChecker().isAllFieldComingFromBody(designData))
+				return res.status(400).json({
 					isSuccess: false,
-					error:
-						'An unexpected error occurred while uploading the design image',
+					error: 'Please provide all required field',
 				});
-			const updatedDesign = await designFunctions().update(
-				designData.designId,
-				'imageAddress',
-				designData.designAddress ?? 'false',
-			);
-			if (updatedDesign)
-				return res.status(200).json({
+			const user: any = req.user;
+			if (!(await designFunctions().isOwner(designData.designId, user.id)))
+				return res.status(401).json({
+					isSuccess: false,
+					error: 'User is not owner of requested design',
+				});
+			if (req.body.designName) designData.designName = req.body.designName;
+			try {
+				const imgUrl: any = await designFunctions().upload(
+					designData.designAddress ?? 'false',
+					'update',
+				);
+				const isDeleted = fileHandler().delateFile(
+					designData.designAddress ?? 'false',
+				);
+				if (!isDeleted)
+					console.log('Uploaded file is not deleted  from local storage');
+				if (imgUrl) designData.designAddress = imgUrl;
+				else
+					return res.status(500).json({
+						isSuccess: false,
+						error:
+							'An unexpected error occurred while uploading the design image',
+					});
+				const updatedDesign = await designFunctions().update(
+					designData.designId,
+					'imageAddress',
+					designData.designAddress ?? 'false',
+				);
+				if (updatedDesign)
+					return res.status(200).json({
+						isSuccess: true,
+						design: updatedDesign,
+					});
+				return res.status(404).json({
 					isSuccess: true,
-					design: updatedDesign,
+					error: 'No design found with given id',
 				});
-			return res.status(404).json({
-				isSuccess: true,
-				error: 'No design found with given id',
-			});
-		} catch (error) {
-			errorHandler().catchBlockHandler(req, res, error, controllerRoute);
-		}
+			} catch (error) {
+				return errorHandler().catchBlockHandler(
+					req,
+					res,
+					error,
+					controllerRoute,
+				);
+			}
+		});
 	},
 );
 
@@ -251,7 +280,7 @@ router.delete(
 				error: 'No design found with given id',
 			});
 		} catch (error) {
-			errorHandler().catchBlockHandler(req, res, error, controllerRoute);
+			return errorHandler().catchBlockHandler(req, res, error, controllerRoute);
 		}
 	},
 );

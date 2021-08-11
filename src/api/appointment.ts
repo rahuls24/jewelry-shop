@@ -50,7 +50,7 @@ router.post(
 						'An unexpected error occurred while saving the appointment in DB',
 				});
 		} catch (error) {
-			errorHandler().catchBlockHandler(req, res, error, controllerRoute);
+			return errorHandler().catchBlockHandler(req, res, error, controllerRoute);
 		}
 	},
 );
@@ -99,7 +99,7 @@ router.get(
 				errorMessage: 'No record found',
 			});
 		} catch (error) {
-			errorHandler().catchBlockHandler(req, res, error, controllerRoute);
+			return errorHandler().catchBlockHandler(req, res, error, controllerRoute);
 		}
 	},
 );
@@ -135,7 +135,7 @@ router.get(
 				errorMessage: 'No record found with give id',
 			});
 		} catch (error) {
-			errorHandler().catchBlockHandler(req, res, error, controllerRoute);
+			return errorHandler().catchBlockHandler(req, res, error, controllerRoute);
 		}
 	},
 );
@@ -172,7 +172,7 @@ router.post(
 				errorMessage: 'No record found with give id',
 			});
 		} catch (error) {
-			errorHandler().catchBlockHandler(req, res, error, controllerRoute);
+			return errorHandler().catchBlockHandler(req, res, error, controllerRoute);
 		}
 	},
 );
