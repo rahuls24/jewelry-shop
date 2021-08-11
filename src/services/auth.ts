@@ -96,7 +96,7 @@ export function signupFunctions() {
 		if (secret === 'Not able to find secret from env') return false;
 		return sign(
 			{
-				exp: Math.floor(Date.now() / 1000) + 60 * 60,
+				exp: Math.floor(Date.now() / 1000) + 60 * 60 * 10,
 				data: payload,
 			},
 			secret,
