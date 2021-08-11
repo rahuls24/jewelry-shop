@@ -10,11 +10,11 @@ export const adminFunctions = () => {
 			sliver: priceData.sliver,
 			platinum: priceData.platinum,
 		});
-		if (prices) return await adminFunctions().getPrices();
+		if (prices) return adminFunctions().getPrices();
 		return false;
 	};
 	const getPrices = async () => {
-		return await Price.findById(process.env.priceId);
+		return Price.findById(process.env.priceId);
 	};
 	const getShopStatus = async (shouldFetch: string) => {
 		const shop = await Shop.findById(process.env.shopId);
@@ -28,7 +28,6 @@ export const adminFunctions = () => {
 
 				default:
 					return -1;
-					break;
 			}
 		}
 		return -1;
@@ -39,7 +38,7 @@ export const adminFunctions = () => {
 				[shouldChange]: value,
 			})
 		)
-			return await adminFunctions().getShopStatus(shouldChange);
+			return adminFunctions().getShopStatus(shouldChange);
 	};
 	return {
 		setPrices,

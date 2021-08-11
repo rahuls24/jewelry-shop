@@ -155,7 +155,6 @@ router.get(
 						isSuccess: false,
 						error: 'Please give a valid input to change status',
 					});
-					break;
 			}
 			if (status !== -1)
 				return res.status(200).json({

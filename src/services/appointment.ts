@@ -3,7 +3,7 @@ import { Appointment } from './../models/appointment';
 // TODO: We have to implement function in which only appointment owner can modify and watch the appointment
 export const commonAppointmentFunctions = () => {
 	const createAppointment = async (appointmentData: any) => {
-		return await new Appointment(appointmentData).save();
+		return new Appointment(appointmentData).save();
 	};
 	const getAppointments = async (userId: string, userType: string) => {
 		if (userType === 'admin')
@@ -12,7 +12,7 @@ export const commonAppointmentFunctions = () => {
 			return Appointment.find({ appointmentFrom: userId });
 	};
 	const getAppointmentById = async (appointmentId: string) => {
-		return await Appointment.findById(appointmentId);
+		return Appointment.findById(appointmentId);
 	};
 
 	const delateAppointment = async (appointmentId: string) => {
@@ -26,7 +26,7 @@ export const commonAppointmentFunctions = () => {
 		const appointment = await Appointment.findByIdAndUpdate(appointmentId, {
 			[updateOn]: updateTo,
 		});
-		return await commonAppointmentFunctions().getById(appointment?._id);
+		return commonAppointmentFunctions().getById(appointment?._id);
 	};
 
 	return {

@@ -23,11 +23,11 @@ export const designFunctions = () => {
 	};
 
 	const saveDesignData = async (designData: any) => {
-		return await new Design(designData).save();
+		return new Design(designData).save();
 	};
 
 	const getDesignData = async (designId: string) => {
-		return await Design.findById(designId);
+		return Design.findById(designId);
 	};
 	const updateDesign = async (
 		designId: string,
@@ -37,7 +37,7 @@ export const designFunctions = () => {
 		await Design.findByIdAndUpdate(designId, {
 			[shouldUpdate]: value,
 		});
-		return await designFunctions().get(designId);
+		return designFunctions().get(designId);
 	};
 	const deleteDesign = async (designId: string) => {
 		return Design.findByIdAndDelete(designId);

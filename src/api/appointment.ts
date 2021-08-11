@@ -99,7 +99,6 @@ router.get(
 						isSuccess: false,
 						errorMessage: 'Please provide a valid user role type',
 					});
-					break;
 			}
 			if (appointments)
 				return res.status(200).json({

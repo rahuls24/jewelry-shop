@@ -99,7 +99,7 @@ router.get(
 				error: 'Please provide a valid design id',
 			});
 		const user: any = req.user;
-		if (!designFunctions().isOwner(req.params.designId, user.id))
+		if (!(await designFunctions().isOwner(req.params.designId, user.id)))
 			return res.status(401).json({
 				isSuccess: false,
 				error: 'User is not owner of requested design',
@@ -133,7 +133,7 @@ router.get(
 				error: 'Please provide a valid design ID id',
 			});
 		const user: any = req.user;
-		if (!designFunctions().isOwner(req.params.designId, user.id))
+		if (!(await designFunctions().isOwner(req.params.designId, user.id)))
 			return res.status(401).json({
 				isSuccess: false,
 				error: 'User is not owner of requested design',
@@ -191,7 +191,7 @@ router.post(
 				error: 'Please provide all required field',
 			});
 		const user: any = req.user;
-		if (!designFunctions().isOwner(designData.designId, user.id))
+		if (!(await designFunctions().isOwner(designData.designId, user.id)))
 			return res.status(401).json({
 				isSuccess: false,
 				error: 'User is not owner of requested design',
@@ -255,7 +255,7 @@ router.delete(
 				error: 'Please give a valid id',
 			});
 		const user: any = req.user;
-		if (!designFunctions().isOwner(req.params.designId, user.id))
+		if (!(await designFunctions().isOwner(req.params.designId, user.id)))
 			return res.status(401).json({
 				isSuccess: false,
 				error: 'User is not owner of requested design',

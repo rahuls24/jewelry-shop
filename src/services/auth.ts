@@ -1,3 +1,4 @@
+import { randomInt } from 'crypto';
 import { User } from './../models/user';
 import { Otp } from './../models/otp';
 import { createTransport, Transporter } from 'nodemailer';
@@ -11,7 +12,7 @@ import {
 import { sign } from 'jsonwebtoken';
 export function commonFunctions() {
 	const getUserDetails = async (email: string) => {
-		return await User.findOne({ email });
+		return User.findOne({ email });
 	};
 	const updateUser = async (
 		email: string,
@@ -24,7 +25,7 @@ export function commonFunctions() {
 		});
 	};
 	const deleteUser = async (id: string) => {
-		return await User.findByIdAndDelete(id);
+		return User.findByIdAndDelete(id);
 	};
 
 	const generateHash = (myPlaintextPassword: string): string => {
@@ -52,7 +53,7 @@ export function commonFunctions() {
 			subject: `OTP confirmation alert for ${process.env.company}`,
 			html: mailBody,
 		};
-		return await transporter.sendMail(mailOptions);
+		return transporter.sendMail(mailOptions);
 	};
 
 	return {
@@ -67,7 +68,7 @@ export function commonFunctions() {
 
 export function signupFunctions() {
 	const sendOTP = async (email: string) => {
-		const otp: number = Math.floor(100000 + Math.random() * 900000);
+		const otp: number = randomInt(100000, 999999);
 		const mailBody = `<h4>Dear user </h4> <br />
                           <p> Enter the OTP ${otp} for email validation </p>`;
 
@@ -75,8 +76,7 @@ export function signupFunctions() {
 		if (sendOtpDetails.accepted) return otp;
 	};
 	const saveOTP = async (otp: number) => {
-		const newOTP = new Otp({ otp });
-		return await newOTP.save();
+		return new Otp({ otp }).save();
 	};
 	const verifyOTP = async (otpID: string, otp: number) => {
 		const otpDetails = await Otp.findById(otpID);
@@ -84,12 +84,12 @@ export function signupFunctions() {
 		return false;
 	};
 	const registerUser = async (userData: IUserFromReqBody) => {
-		return await new User(userData).save();
+		return new User(userData).save();
 	};
 	const signin = (payload: IPayloadForJwt) => {
-		const secret: string =
-			process.env.passportJwtKey ?? 'Not able to find secret from env';
-		if (secret === 'Not able to find secret from env') return false;
+		const defaultSecret = 'Not able to find secret from env';
+		const secret: string = process.env.passportJwtKey ?? defaultSecret;
+		if (secret === defaultSecret) return false;
 		return sign(
 			{
 				exp: Math.floor(Date.now() / 1000) + 60 * 60 * 10,
