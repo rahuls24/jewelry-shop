@@ -6,7 +6,11 @@ import {
 	commonFunctions as common,
 	signupFunctions as signup,
 } from '../services/auth';
-import { isEmail, isAllFieldComingFromBody } from '../services/commonFunctions';
+import {
+	isEmail,
+	isAllFieldComingFromBody,
+	errorHandler,
+} from '../services/commonFunctions';
 import chalk from 'chalk';
 /*
     @ Route Type => Post
@@ -55,17 +59,7 @@ router.post('/signup', async (req: Request, res: Response) => {
 			error: ' An unexpected error occurred while registering the user to DB.',
 		});
 	} catch (error) {
-		if (error instanceof Error) {
-			const errorMessage = {
-				route: controllerRoute + req.route?.path,
-				error: error.message,
-			};
-			console.log(chalk.red(JSON.stringify(errorMessage)));
-			return res.status(500).json({
-				isSuccess: false,
-				error: errorMessage,
-			});
-		}
+		errorHandler(req, res, error, controllerRoute);
 	}
 });
 /*
@@ -95,17 +89,7 @@ router.post('/generate-otp', async (req: Request, res: Response) => {
 				'Otp is not generated, Some unexpected error occurred while saving it to in db',
 		});
 	} catch (error) {
-		if (error instanceof Error) {
-			const errorMessage = {
-				route: controllerRoute + req.route?.path,
-				error: error.message,
-			};
-			console.log(chalk.red(JSON.stringify(errorMessage)));
-			return res.status(500).json({
-				isSuccess: false,
-				error: errorMessage,
-			});
-		}
+		errorHandler(req, res, error, controllerRoute);
 	}
 });
 
@@ -144,17 +128,7 @@ router.post('/verify-otp', async (req: Request, res: Response) => {
 			ErrorMessage: 'Entered OTP is not matched',
 		});
 	} catch (error) {
-		if (error instanceof Error) {
-			const errorMessage = {
-				route: controllerRoute + req.route?.path,
-				error: error.message,
-			};
-			console.log(chalk.red(JSON.stringify(errorMessage)));
-			return res.status(500).json({
-				isSuccess: false,
-				error: errorMessage,
-			});
-		}
+		errorHandler(req, res, error, controllerRoute);
 	}
 });
 
@@ -214,17 +188,7 @@ router.post('/signin', async (req, res) => {
 				errorMessage: 'User is not found',
 			});
 	} catch (error) {
-		if (error instanceof Error) {
-			const errorMessage = {
-				route: controllerRoute + req.route?.path,
-				error: error.message,
-			};
-			console.log(chalk.red(JSON.stringify(errorMessage)));
-			return res.status(500).json({
-				isSuccess: false,
-				error: errorMessage,
-			});
-		}
+		errorHandler(req, res, error, controllerRoute);
 	}
 });
 

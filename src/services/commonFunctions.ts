@@ -1,6 +1,8 @@
 import validator from 'validator';
 import date from 'date-and-time';
 import fs from 'fs';
+import { Request, Response } from 'express';
+import chalk from 'chalk';
 export const isEmail = (email: string): boolean => {
 	return validator.isEmail(email);
 };
@@ -46,5 +48,24 @@ export const delateFile = (path: string): boolean => {
 	} catch (err) {
 		console.error(err);
 		return false;
+	}
+};
+
+export const errorHandler = (
+	req: Request,
+	res: Response,
+	error: any,
+	controllerRoute: string,
+) => {
+	if (error instanceof Error) {
+		const errorMessage = {
+			route: controllerRoute + req.route?.path,
+			error: error.message,
+		};
+		console.log(chalk.red(JSON.stringify(errorMessage)));
+		return res.status(500).json({
+			isSuccess: false,
+			error: errorMessage,
+		});
 	}
 };

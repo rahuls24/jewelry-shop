@@ -5,6 +5,7 @@ import multer from 'multer';
 import {
 	isAllFieldComingFromBody,
 	delateFile,
+	errorHandler,
 } from './../services/commonFunctions';
 const upload = multer({ dest: './src/tempImageFromMulter' });
 import passport from 'passport';
@@ -68,17 +69,7 @@ router.post(
 					'There is an unexpected error occurred while uploading the image on server',
 			});
 		} catch (error) {
-			if (error instanceof Error) {
-				const errorMessage = {
-					route: controllerRoute + req.route?.path,
-					error: error.message,
-				};
-				console.log(chalk.red(JSON.stringify(errorMessage)));
-				return res.status(500).json({
-					isSuccess: false,
-					error: errorMessage,
-				});
-			}
+			errorHandler(req, res, error, controllerRoute);
 		}
 	},
 );
@@ -99,21 +90,25 @@ router.get(
 				error: 'Please provide a valid design id',
 			});
 		const user: any = req.user;
-		if (!(await designFunctions().isOwner(req.params.designId, user.id)))
-			return res.status(401).json({
+		try {
+			if (!(await designFunctions().isOwner(req.params.designId, user.id)))
+				return res.status(401).json({
+					isSuccess: false,
+					error: 'User is not owner of requested design',
+				});
+			const design = await designFunctions().get(req.params.designId);
+			if (design)
+				return res.status(200).json({
+					isSuccess: true,
+					design,
+				});
+			return res.status(404).json({
 				isSuccess: false,
-				error: 'User is not owner of requested design',
+				error: 'No design found',
 			});
-		const design = await designFunctions().get(req.params.designId);
-		if (design)
-			return res.status(200).json({
-				isSuccess: true,
-				design,
-			});
-		return res.status(404).json({
-			isSuccess: false,
-			error: 'No design found',
-		});
+		} catch (error) {
+			errorHandler(req, res, error, controllerRoute);
+		}
 	},
 );
 
@@ -154,17 +149,7 @@ router.get(
 				error: 'No design found with given design id',
 			});
 		} catch (error) {
-			if (error instanceof Error) {
-				const errorMessage = {
-					route: controllerRoute + req.route?.path,
-					error: error.message,
-				};
-				console.log(chalk.red(JSON.stringify(errorMessage)));
-				return res.status(500).json({
-					isSuccess: false,
-					error: errorMessage,
-				});
-			}
+			errorHandler(req, res, error, controllerRoute);
 		}
 	},
 );
@@ -224,17 +209,7 @@ router.post(
 				error: 'No design found with given id',
 			});
 		} catch (error) {
-			if (error instanceof Error) {
-				const errorMessage = {
-					route: controllerRoute + req.route?.path,
-					error: error.message,
-				};
-				console.log(chalk.red(JSON.stringify(errorMessage)));
-				return res.status(500).json({
-					isSuccess: false,
-					error: errorMessage,
-				});
-			}
+			errorHandler(req, res, error, controllerRoute);
 		}
 	},
 );
@@ -270,17 +245,7 @@ router.delete(
 				error: 'No design found with given id',
 			});
 		} catch (error) {
-			if (error instanceof Error) {
-				const errorMessage = {
-					route: controllerRoute + req.route?.path,
-					error: error.message,
-				};
-				console.log(chalk.red(JSON.stringify(errorMessage)));
-				return res.status(500).json({
-					isSuccess: false,
-					error: errorMessage,
-				});
-			}
+			errorHandler(req, res, error, controllerRoute);
 		}
 	},
 );

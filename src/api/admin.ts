@@ -3,6 +3,7 @@ import express, { Request, Response } from 'express';
 import chalk from 'chalk';
 import { adminFunctions } from './../services/admin';
 import {
+	errorHandler,
 	isAllFieldComingFromBody,
 	isBoolean,
 } from './../services/commonFunctions';
@@ -62,17 +63,7 @@ router.post(
 					'There is some unexpected error occurred while updating of getting the price from db',
 			});
 		} catch (error) {
-			if (error instanceof Error) {
-				const errorMessage = {
-					route: controllerRoute + req.route?.path,
-					error: error.message,
-				};
-				console.log(chalk.red(JSON.stringify(errorMessage)));
-				return res.status(500).json({
-					isSuccess: false,
-					error: errorMessage,
-				});
-			}
+			errorHandler(req, res, error, controllerRoute);
 		}
 	},
 );
@@ -99,17 +90,7 @@ router.get(
 				error: 'No price list present in DB',
 			});
 		} catch (error) {
-			if (error instanceof Error) {
-				const errorMessage = {
-					route: controllerRoute + req.route?.path,
-					error: error.message,
-				};
-				console.log(chalk.red(JSON.stringify(errorMessage)));
-				return res.status(500).json({
-					isSuccess: false,
-					error: errorMessage,
-				});
-			}
+			errorHandler(req, res, error, controllerRoute);
 		}
 	},
 );
@@ -167,17 +148,7 @@ router.get(
 					'An unexpected error occurred while fetching or updating the status',
 			});
 		} catch (error) {
-			if (error instanceof Error) {
-				const errorMessage = {
-					route: controllerRoute + req.route?.path,
-					error: error.message,
-				};
-				console.log(chalk.red(JSON.stringify(errorMessage)));
-				return res.status(500).json({
-					isSuccess: false,
-					error: errorMessage,
-				});
-			}
+			errorHandler(req, res, error, controllerRoute);
 		}
 	},
 );
@@ -205,17 +176,7 @@ router.get(
 					'An unexpected error occurred. Please check you are providing correct parameters',
 			});
 		} catch (error) {
-			if (error instanceof Error) {
-				const errorMessage = {
-					route: controllerRoute + req.route?.path,
-					error: error.message,
-				};
-				console.log(chalk.red(JSON.stringify(errorMessage)));
-				return res.status(500).json({
-					isSuccess: false,
-					error: errorMessage,
-				});
-			}
+			errorHandler(req, res, error, controllerRoute);
 		}
 	},
 );

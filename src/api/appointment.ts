@@ -5,7 +5,10 @@ export const router = express.Router();
 import passport from 'passport';
 import isDate from 'validator/lib/isDate';
 import { commonAppointmentFunctions } from './../services/appointment';
-import { isAllFieldComingFromBody } from './../services/commonFunctions';
+import {
+	errorHandler,
+	isAllFieldComingFromBody,
+} from './../services/commonFunctions';
 import chalk from 'chalk';
 /*
     @ Route Type => POST
@@ -51,17 +54,7 @@ router.post(
 						'An unexpected error occurred while saving the appointment in DB',
 				});
 		} catch (error) {
-			if (error instanceof Error) {
-				const errorMessage = {
-					route: controllerRoute + req.route?.path,
-					error: error.message,
-				};
-				console.log(chalk.red(JSON.stringify(errorMessage)));
-				return res.status(500).json({
-					isSuccess: false,
-					error: errorMessage,
-				});
-			}
+			errorHandler(req, res, error, controllerRoute);
 		}
 	},
 );
@@ -110,17 +103,7 @@ router.get(
 				errorMessage: 'No record found',
 			});
 		} catch (error) {
-			if (error instanceof Error) {
-				const errorMessage = {
-					route: controllerRoute + req.route?.path,
-					error: error.message,
-				};
-				console.log(chalk.red(JSON.stringify(errorMessage)));
-				return res.status(500).json({
-					isSuccess: false,
-					error: errorMessage,
-				});
-			}
+			errorHandler(req, res, error, controllerRoute);
 		}
 	},
 );
@@ -156,17 +139,7 @@ router.get(
 				errorMessage: 'No record found with give id',
 			});
 		} catch (error) {
-			if (error instanceof Error) {
-				const errorMessage = {
-					route: controllerRoute + req.route?.path,
-					error: error.message,
-				};
-				console.log(chalk.red(JSON.stringify(errorMessage)));
-				return res.status(500).json({
-					isSuccess: false,
-					error: errorMessage,
-				});
-			}
+			errorHandler(req, res, error, controllerRoute);
 		}
 	},
 );
@@ -203,17 +176,7 @@ router.post(
 				errorMessage: 'No record found with give id',
 			});
 		} catch (error) {
-			if (error instanceof Error) {
-				const errorMessage = {
-					route: controllerRoute + req.route?.path,
-					error: error.message,
-				};
-				console.log(chalk.red(JSON.stringify(errorMessage)));
-				return res.status(500).json({
-					isSuccess: false,
-					error: errorMessage,
-				});
-			}
+			errorHandler(req, res, error, controllerRoute);
 		}
 	},
 );

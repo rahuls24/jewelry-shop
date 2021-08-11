@@ -20,7 +20,7 @@ export function commonFunctions() {
 		valueUpdateBy: any,
 	) => {
 		const user = await commonFunctions().getUser(email);
-		return await User.findByIdAndUpdate(user?._id, {
+		return User.findByIdAndUpdate(user?._id, {
 			[shouldUpdateDoneIn]: valueUpdateBy,
 		});
 	};
