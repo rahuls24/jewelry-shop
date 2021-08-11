@@ -11,6 +11,7 @@ const port = process.env.PORT || 8000;
 import { router as authRouter } from './src/api/auth';
 import { router as appointmentRouter } from './src/api/appointment';
 import { router as adminRouter } from './src/api/admin';
+import { router as DesignRouter } from './src/api/design';
 
 // Initialization of Middleware
 app.use(express.json());
@@ -36,6 +37,7 @@ app.use(passport.initialize());
 app.use('/api/auth', authRouter);
 app.use('/api/appointment', appointmentRouter);
 app.use('/api/admin', adminRouter);
+app.use('/api/design', DesignRouter);
 
 //  importing passport strategies
 import { jwtStrategy as adminJwtStrategy } from './src/strategies/jwtStrategies/admin';
@@ -51,3 +53,5 @@ app.get('/', (req: Request, res: Response) => {
 app.listen(port, () => {
 	console.log(`Server is running on port ${port}`);
 });
+
+// TODO: Check the HTTP status if we not get any data from DB in all apis(design API is done)
