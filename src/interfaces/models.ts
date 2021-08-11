@@ -1,3 +1,5 @@
+import { Document } from 'mongoose';
+import { typeChecker } from './../services/commonFunctions';
 export interface IUser extends Document {
 	_id?: string;
 	name: string;
@@ -50,4 +52,14 @@ export interface IDesign extends Document {
 	transitiveAvailabilityDate: Date;
 	expectedPrice: number;
 	uploadedOn: Date;
+}
+
+export interface IMessage extends Document {
+	email: string;
+	name: string;
+	receiver: string;
+	messageSubject: string;
+	messageDescription: string;
+	priority: string;
+	createdOn: Date;
 }
