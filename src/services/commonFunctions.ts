@@ -1,5 +1,6 @@
 import validator from 'validator';
 import date from 'date-and-time';
+import fs from 'fs';
 export const isEmail = (email: string): boolean => {
 	return validator.isEmail(email);
 };
@@ -36,4 +37,14 @@ export const isMongoId = (item: any): boolean => {
 
 export const addDaysFromToday = (days: number): Date => {
 	return date.addDays(new Date(), days);
+};
+
+export const delateFile = (path: any) => {
+	try {
+		fs.unlinkSync(path);
+		return true;
+	} catch (err) {
+		console.error(err);
+		return false;
+	}
 };
