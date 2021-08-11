@@ -26,7 +26,7 @@ router.post(
 
 			// Getting list of element list from .env file
 			const jewelryTypeList: any = process.env.priceAvailable?.split('+');
-			//We are getting all params as string so converting those in Integer
+			// We are getting all params as string so converting those in Integer
 
 			for (const key in req.body) {
 				currentPriceData[key] = Number(req.body[key]);
@@ -37,13 +37,12 @@ router.post(
 					error: 'Please give value for which you want to change the price',
 				});
 
-			//All params are optional to send from body so we are initializes which is not send by user
-			for (let index = 0; index < jewelryTypeList.length; index++) {
-				if (!(jewelryTypeList[index] in currentPriceData))
-					currentPriceData[jewelryTypeList[index]] =
-						previousPriceData[jewelryTypeList[index]];
+			// All params are optional to send from body so we are initializes which is not send by user
+			for (const jewelry of jewelryTypeList) {
+				if (!(jewelry in currentPriceData))
+					currentPriceData[jewelry] = previousPriceData[jewelry];
 			}
-			//Checking that either user have sent some value which is not present in  jewelryTypeList
+			// Checking that either user have sent some value which is not present in  jewelryTypeList
 			for (const key in currentPriceData) {
 				if (!(key in previousPriceData))
 					return res.status(404).json({

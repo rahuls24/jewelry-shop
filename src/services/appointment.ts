@@ -1,6 +1,6 @@
 import { Appointment } from './../models/appointment';
 
-//TODO: We have to implement function in which only appointment owner can modify and watch the appointment
+// TODO: We have to implement function in which only appointment owner can modify and watch the appointment
 export const commonAppointmentFunctions = () => {
 	const createAppointment = async (appointmentData: any) => {
 		return await new Appointment(appointmentData).save();

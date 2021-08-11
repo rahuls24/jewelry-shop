@@ -166,7 +166,7 @@ router.post('/verify-otp', async (req: Request, res: Response) => {
 	@params => email and password 
 */
 router.post('/signin', async (req, res) => {
-	let userData = {
+	const userData = {
 		email: req.body.email,
 		password: req.body.password,
 	};

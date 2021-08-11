@@ -48,6 +48,6 @@ export interface IDesign extends Document {
 	isAvailable: boolean;
 
 	transitiveAvailabilityDate: Date;
-	expectedPrice: Number;
+	expectedPrice: number;
 	uploadedOn: Date;
 }

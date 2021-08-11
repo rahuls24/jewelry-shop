@@ -75,10 +75,7 @@ export function signupFunctions() {
 		if (sendOtpDetails.accepted) return otp;
 	};
 	const saveOTP = async (otp: number) => {
-		const newOTP = new Otp({
-			otp: otp,
-			failTest: 'reason for fail',
-		});
+		const newOTP = new Otp({ otp });
 		return await newOTP.save();
 	};
 	const verifyOTP = async (otpID: string, otp: number) => {
