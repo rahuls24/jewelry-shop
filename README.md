@@ -1,4 +1,4 @@
-# Jeweley Shop Portal
+# Jewelry Shop Portal
 ###  This is a simple portal for jewelry shop.I am still working on this project.
 ## Prerequisites
 
